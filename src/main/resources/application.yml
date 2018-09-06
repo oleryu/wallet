@@ -1,0 +1,4 @@
+web3j:
+  client-address: https://rinkeby.infura.io/key
+  admin-client: true
+  httpTimeoutSeconds: 600
