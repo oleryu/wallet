@@ -1,4 +1,4 @@
-package com.hengpu.wallet;
+package xyz.olery.wallet;
 
 import org.bitcoinj.core.Address;
 import org.bitcoinj.core.ECKey;

@@ -1,4 +1,4 @@
-package com.hengpu.wallet;
+package xyz.olery.wallet;
 
 public class MnemonicToWallet {
 }

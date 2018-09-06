@@ -1,4 +1,4 @@
-package com.hengpu.wallet;
+package xyz.olery.wallet;
 
 import org.web3j.crypto.Credentials;
 import org.web3j.crypto.WalletUtils;
