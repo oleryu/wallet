@@ -1,4 +1,4 @@
-package xyz.olery.wallet.util;
+package xyz.olery.wallet.hd;
 
 
 import java.io.IOException;
