@@ -8,10 +8,12 @@ import org.bitcoinj.crypto.ChildNumber;
 import org.bitcoinj.crypto.DeterministicKey;
 import org.bitcoinj.crypto.HDUtils;
 import org.bitcoinj.params.MainNetParams;
+import org.bitcoinj.params.TestNet3Params;
 import org.bitcoinj.script.Script;
 import org.bitcoinj.wallet.DeterministicKeyChain;
 import org.bitcoinj.wallet.DeterministicSeed;
 import org.web3j.crypto.Credentials;
+//import org.web3j.crypto.Credentials;
 
 import java.math.BigInteger;
 import java.util.List;
@@ -63,6 +65,8 @@ public class MnemonicToKey {
 
         DeterministicKey key = chain.getKeyByPath(keyPath, true);
 
+        com.google.protobuf.ByteString bytes;
+
         return key;
     }
 
@@ -80,7 +84,7 @@ public class MnemonicToKey {
         BigInteger privKey = key.getPrivKey();
 
         ECKey ecKey = ECKey.fromPrivate(privKey);
-        Address address = ecKey.toAddress(NetworkParameters.prodNet());
+        Address address = ecKey.toAddress(params);
 
         return address.toBase58();
     }
@@ -100,6 +104,17 @@ public class MnemonicToKey {
 
     }
 
+    public static String ethPrivateKey(String seedCode,String passphrase,String strKeypath) throws Exception {
+
+        //参见 ：http://nmgfrank.com/2016/03/%E4%BD%BF%E7%94%A8%E5%BC%80%E6%BA%90%E5%BA%93bitcoinj%E5%AE%9E%E7%8E%B0%E7%AE%80%E6%98%93%E5%8C%BA%E5%9D%97%E9%93%BE%E9%92%B1%E5%8C%85/
+        DeterministicKey key = getDeterministicKey(seedCode,passphrase,strKeypath);
+
+        //BigInteger privKey = key.getPrivKey();
+        System.out.println(key.getPrivateKeyAsHex());
+
+        return "";
+
+    }
 
     public static void main(String[] args) throws Exception {
         String seedCode = "tuna biology crawl bone bread chalk light there pattern borrow afraid inherit";
@@ -109,13 +124,15 @@ public class MnemonicToKey {
         //MainNetParams
         NetworkParameters params = MainNetParams.get();
         String bip44Address = MnemonicToKey.btc44Address(seedCode,"",params,btcKeyath);
-        String bip49Address = MnemonicToKey.btc44Address(seedCode,"",params,btcKeyath);
+        String bip49Address = MnemonicToKey.btc49Address(seedCode,"",params,btcKeyath);
 
-        System.out.println("BIP44 Address" +bip44Address);
-        System.out.println("BIP49 Address" +bip49Address);
+        System.out.println("BIP44 Address：" +bip44Address);
+        System.out.println("BIP49 Address：" +bip49Address);
 
+//mgcqjgfYxh4cVEzMqwDiUr8XRx1t8DhrGJ
 
-        String ethAddrss = MnemonicToKey.ethAddress(seedCode,"",ethKeyath);
+//        String ethAddrss = MnemonicToKey.ethAddress(seedCode,"",ethKeyath);
+        String ethAddrss = MnemonicToKey.ethPrivateKey(seedCode,"",ethKeyath);
 
     }
 
