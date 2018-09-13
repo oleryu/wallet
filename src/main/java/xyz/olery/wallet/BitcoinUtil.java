@@ -20,7 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
-public class BitUtil {
+public class BitcoinUtil {
     public static final String passphrase = "";
     /**
      * 通过Wallet 获取 助记词
@@ -42,14 +42,18 @@ public class BitUtil {
         return ecKey;
     }
     public  static String getPubKeyFrom(ECKey ecKey){
-        NetworkParameters params =getParams();
+        //MainNetParams.get()
+        //TestNet3Params.get();
+        NetworkParameters params =TestNet3Params.get();
         return ecKey.toAddress(params).toBase58().toString();
     }
 
 
     //通过speed 获取钱包
     public static Wallet getFromSpeed(String seedCode){
-        NetworkParameters params = getParams();
+        //MainNetParams.get()
+        //TestNet3Params.get();
+        NetworkParameters params =TestNet3Params.get();
         DeterministicSeed seed;
         try {
             seed = new DeterministicSeed(seedCode, null, passphrase, Utils.currentTimeSeconds() );
@@ -78,7 +82,10 @@ public class BitUtil {
 
     //发送交易
     public static void send(Wallet wallet,String recipientAddress, String amount){
-        NetworkParameters params = getParams();
+        //MainNetParams.get()
+        //TestNet3Params.get();
+
+        NetworkParameters params =TestNet3Params.get();
         Address targetAddress  = Address.fromBase58(params, recipientAddress);
         // Do the send of 1 BTC in the background. This could throw InsufficientMoneyException.
         SPVBlockStore blockStore = null;
@@ -110,11 +117,12 @@ public class BitUtil {
         } catch (BlockStoreException e) {
             e.printStackTrace();
         }
-
     }
 
     public static  String send(WalletAppKit walletAppKit, String recipientAddress, String amount){
-        NetworkParameters params = getParams();
+        //MainNetParams.get()
+        //TestNet3Params.get();
+        NetworkParameters params =TestNet3Params.get();
         String err = "";
         //YuHL
 //        if(TextUtils.isEmpty(recipientAddress) || recipientAddress.equals("Scan recipient QR")) {
@@ -160,10 +168,12 @@ public class BitUtil {
     }
 //
     public static void getWallet(){
-        NetworkParameters params = getParams();
+        //MainNetParams.get()
+        //TestNet3Params.get();
+        NetworkParameters params =TestNet3Params.get();
         Wallet wallet = new Wallet(params);
 
-        List<ECKey> keys = new ArrayList<>();
+        List<ECKey> keys = new ArrayList<ECKey>();
         ECKey ecKey = new ECKey();
         //加密eckey
         ecKey.encrypt(wallet.getKeyCrypter(),wallet.getKeyCrypter().deriveKey("123456"));
@@ -195,8 +205,8 @@ public class BitUtil {
 //
 //
     public static void userSPeed(Wallet wallet){
+        NetworkParameters params = TestNet3Params.get();
 
-        NetworkParameters params = getParams();
         DeterministicSeed seed = wallet.getKeyChainSeed();
         System.out.println("Seed words are: " + Joiner.on(" ").join(seed.getMnemonicCode()));
         System.out.println("Seed birthday is: " + seed.getCreationTimeSeconds());
@@ -216,14 +226,12 @@ public class BitUtil {
 
     }
 //
-    public static NetworkParameters getParams(){
-    //    return Constant.IS_PRODUCTION ? MainNetParams.get() : TestNet3Params.get();
-        return MainNetParams.get();
-    }
-//
 //
     public static void t(Wallet wallet,String recipientAddress,String password,String mount){
-        Address a =Address.fromBase58(getParams(), recipientAddress);
+        //MainNetParams.get()
+        //TestNet3Params.get();
+
+        Address a =Address.fromBase58(TestNet3Params.get(), recipientAddress);
         SendRequest req = SendRequest.to(a, Coin.parseCoin(mount));
         req.aesKey = wallet.getKeyCrypter().deriveKey(password);
         try {
@@ -265,7 +273,9 @@ public class BitUtil {
     }
 //
     public static void test2(ECKey ceKey){
-        NetworkParameters params =getParams();
+        //MainNetParams.get()
+        //TestNet3Params.get();
+        NetworkParameters params =TestNet3Params.get();
         String s = ceKey.toAddress(params).toBase58().toString();
         String privateKeyAsWiF = ceKey.getPrivateKeyAsWiF(params);// 私钥， WIF(Wallet Import Format)
 //        LogUtil.e(privateKeyAsWiF+"=========="+s);
@@ -275,13 +285,21 @@ public class BitUtil {
 //
     //通过私钥拿到eckey
     public static ECKey getECkey(String prikey){
-        ECKey key = DumpedPrivateKey.fromBase58(getParams(), prikey).getKey();
+        //MainNetParams.get()
+        //TestNet3Params.get();
+        NetworkParameters params =TestNet3Params.get();
+        ECKey key = DumpedPrivateKey.fromBase58(params, prikey).getKey();
         return key;
     }
 //
 //
     //通过助记词导入新钱包
     public static Wallet createWallet(String seedCode,String password) {
+        //MainNetParams.get()
+        //TestNet3Params.get();
+        NetworkParameters params =TestNet3Params.get();
+
+
         KeyChainGroup kcg;
         DeterministicSeed deterministicSeed = null;
         try {
@@ -289,15 +307,18 @@ public class BitUtil {
         } catch (UnreadableWalletException e) {
             e.printStackTrace();
         }
-        kcg = new KeyChainGroup(getParams(), deterministicSeed);
-        Wallet wallet = new Wallet(getParams(), kcg);
+        kcg = new KeyChainGroup(params, deterministicSeed);
+        Wallet wallet = new Wallet(params, kcg);
         return wallet;
     }
 //
     //创建新钱包。
     public static Wallet createWallet2() {
-        KeyChainGroup kcg = new KeyChainGroup(getParams());
-        Wallet wallet = new Wallet(getParams(), kcg);
+        //MainNetParams.get()
+        //TestNet3Params.get();
+        NetworkParameters params =TestNet3Params.get();
+        KeyChainGroup kcg = new KeyChainGroup(params);
+        Wallet wallet = new Wallet(params, kcg);
         wallet.getParams().getId();
 
         return wallet;
