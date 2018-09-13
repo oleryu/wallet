@@ -8,7 +8,7 @@ import java.util.ArrayList;
 public class Walletdata {
     private String dentityId;
     private String dentityName;
-    private ArrayList<Wallet> walletlist;
+    private ArrayList<MyWallet> walletlist;
 
     private String sign;
 
@@ -20,7 +20,7 @@ public class Walletdata {
         this.dentityName = dentityName;
     }
 
-    public void setWalletlist(ArrayList<Wallet> walletlist) {
+    public void setWalletlist(ArrayList<MyWallet> walletlist) {
         this.walletlist = walletlist;
     }
 
@@ -36,7 +36,7 @@ public class Walletdata {
         return dentityName;
     }
 
-    public ArrayList<Wallet> getWalletlist() {
+    public ArrayList<MyWallet> getWalletlist() {
         return walletlist;
     }
 
@@ -53,7 +53,7 @@ public class Walletdata {
 
 
         Walletdata walletdata = new Walletdata();
-        Wallet wallet = new Wallet(name, type, keytype, addr, keytext);
+        MyWallet wallet = new MyWallet(name, type, keytype, addr, keytext);
         ArrayList list = new ArrayList();
         list.add(wallet);
         walletdata.setWalletlist(list);

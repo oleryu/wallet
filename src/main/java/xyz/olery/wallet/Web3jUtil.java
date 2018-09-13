@@ -89,11 +89,13 @@ public class Web3jUtil {
 //        System.out.println("status: " + send.getStatus());
 //    }
 //
-//    public static void main(String[] args) throws Exception {
-//        File file = new File("D://home/wallet");
-////        //方法返回创建的钱包文件名
-////        //WalletUtils.generateNewWalletFile("123456", file, true);
-////
+    public static void main(String[] args) throws Exception {
+        File file = new File("D://home/wallet");
+//        //方法返回创建的钱包文件名
+        WalletUtils.generateNewWalletFile("123456", file, true);
+
+
+//
 //        Credentials credentials
 //                = WalletUtils.loadCredentials("123456","D:\\home\\wallet\\UTC--2018-08-27T15-11-29.897000000Z--93e4c38302fa88e037b0f5024ed81d8418cffd2a.json" );
 //        String returnAddress = credentials.getAddress();
@@ -113,6 +115,6 @@ public class Web3jUtil {
 
 
 
-//
-//    }
+
+    }
 }

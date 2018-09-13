@@ -1,13 +1,13 @@
 package xyz.olery.wallet.hd;
 
-public class Wallet {
+public class MyWallet {
     private String name;
     private String type;
     private String keytype;
     private String addr;
     private String keytext;
 
-    public Wallet(String name, String type, String keytype, String addr, String keytext) {
+    public MyWallet(String name, String type, String keytype, String addr, String keytext) {
         this.name = name;
         this.type = type;
         this.keytype = keytype;

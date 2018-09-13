@@ -1,5 +1,6 @@
 package xyz.olery.wallet.hd;
 
+import net.sf.json.JSONObject;
 import org.bitcoinj.core.Address;
 import org.bitcoinj.core.ECKey;
 import org.bitcoinj.core.NetworkParameters;
@@ -12,7 +13,11 @@ import org.bitcoinj.params.TestNet3Params;
 import org.bitcoinj.script.Script;
 import org.bitcoinj.wallet.DeterministicKeyChain;
 import org.bitcoinj.wallet.DeterministicSeed;
+import org.bitcoinj.wallet.Wallet;
 import org.web3j.crypto.Credentials;
+import org.web3j.crypto.ECKeyPair;
+import org.web3j.crypto.Keys;
+import org.web3j.crypto.WalletFile;
 //import org.web3j.crypto.Credentials;
 
 import java.math.BigInteger;
@@ -104,15 +109,59 @@ public class MnemonicToKey {
 
     }
 
+    /**
+     *  导出私钥
+     * @param seedCode    助记词
+     * @param passphrase  密码
+     * @param strKeypath  KEYPATH
+     * @return
+     * @throws Exception
+     */
     public static String ethPrivateKey(String seedCode,String passphrase,String strKeypath) throws Exception {
 
         //参见 ：http://nmgfrank.com/2016/03/%E4%BD%BF%E7%94%A8%E5%BC%80%E6%BA%90%E5%BA%93bitcoinj%E5%AE%9E%E7%8E%B0%E7%AE%80%E6%98%93%E5%8C%BA%E5%9D%97%E9%93%BE%E9%92%B1%E5%8C%85/
+        //参见 https://lhalcyon.com/blockchain-eth-wallet-android/
         DeterministicKey key = getDeterministicKey(seedCode,passphrase,strKeypath);
 
         //BigInteger privKey = key.getPrivKey();
         System.out.println(key.getPrivateKeyAsHex());
 
+//
+
         return "";
+
+    }
+
+    /**
+     *
+     * @param seedCode    助记词
+     * @param passphrase  密码
+     * @param strKeypath  BIP32 Derivation Path
+     * @return
+     * @throws Exception
+     */
+    public static String ethKeystore(String seedCode,String passphrase,String strKeypath) throws Exception {
+
+        //参见 https://lhalcyon.com/blockchain-eth-wallet-android/
+        DeterministicKey child = getDeterministicKey(seedCode,passphrase,strKeypath);
+
+        //私钥&公钥
+        String childPrivateKey = child.getPrivateKeyAsHex();
+        String childPublicKey = child.getPublicKeyAsHex();
+
+        ECKeyPair childEcKeyPair = ECKeyPair.create(child.getPrivKeyBytes());
+
+        //钱包地址
+        String childAddress = Keys.getAddress(childEcKeyPair);
+        //String fullAddress = Constant.PREFIX_16 + childAddress;
+        //Logger.w("child privateKey:" + childPrivateKey + "\n" + "child publicKey:" + childPublicKey + "\n" + "address:" + fullAddress);
+
+        //
+        WalletFile walletFile = org.web3j.crypto.Wallet.createStandard(passphrase, childEcKeyPair);
+        //String keystore = Singleton.get().gson.toJson(walletFile);
+        JSONObject jsonObject = JSONObject.fromObject(walletFile);
+
+        return jsonObject.toString();
 
     }
 
@@ -133,6 +182,8 @@ public class MnemonicToKey {
 
 //        String ethAddrss = MnemonicToKey.ethAddress(seedCode,"",ethKeyath);
         String ethAddrss = MnemonicToKey.ethPrivateKey(seedCode,"",ethKeyath);
+
+        MnemonicToKey.ethKeystore(seedCode,"hongliang",ethKeyath);
 
     }
 
