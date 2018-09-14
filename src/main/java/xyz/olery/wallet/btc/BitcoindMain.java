@@ -13,7 +13,7 @@ import wf.bitcoin.javabitcoindrpcclient.BitcoindRpcClient.MiningInfo;
  *
  * @author Bruno Candido Volpato da Cunha
  *
- *
+ * from  https://github.com/brunocvcunha/bitcoind-java-client-sample.git
  *
  */
 public class BitcoindMain {
