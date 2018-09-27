@@ -9,6 +9,7 @@ import org.bitcoinj.crypto.ChildNumber;
 import org.bitcoinj.crypto.DeterministicKey;
 import org.bitcoinj.crypto.HDUtils;
 import org.bitcoinj.params.MainNetParams;
+import org.bitcoinj.params.RegTestParams;
 import org.bitcoinj.params.TestNet3Params;
 import org.bitcoinj.script.Script;
 import org.bitcoinj.wallet.DeterministicKeyChain;
@@ -18,6 +19,7 @@ import org.web3j.crypto.Credentials;
 import org.web3j.crypto.ECKeyPair;
 import org.web3j.crypto.Keys;
 import org.web3j.crypto.WalletFile;
+import xyz.olery.wallet.btc.LocalRegTestParams;
 //import org.web3j.crypto.Credentials;
 
 import java.math.BigInteger;
@@ -84,18 +86,27 @@ public class MnemonicToKey {
         return getAddressAsString(ecKey,params);
     }
 
+    public static ECKey eckey(String seedCode,String passphrase,NetworkParameters params,String strKeypath) throws Exception {
+        DeterministicKey key = getDeterministicKey(seedCode,passphrase,strKeypath);
+        BigInteger privKey = key.getPrivKey();
+
+        ECKey ecKey = ECKey.fromPrivate(privKey);
+
+        return ecKey;
+    }
+
     public static String btc44Address(String seedCode,String passphrase,NetworkParameters params,String strKeypath) throws Exception {
         DeterministicKey key = getDeterministicKey(seedCode,passphrase,strKeypath);
         BigInteger privKey = key.getPrivKey();
 
         ECKey ecKey = ECKey.fromPrivate(privKey);
+        System.out.println(ecKey.getPrivKey());
         Address address = ecKey.toAddress(params);
 
         return address.toBase58();
     }
 
     public static String ethAddress(String seedCode,String passphrase,String strKeypath) throws Exception {
-
 
         DeterministicKey key = getDeterministicKey(seedCode,passphrase,strKeypath);
 
@@ -158,6 +169,9 @@ public class MnemonicToKey {
 
         //
         WalletFile walletFile = org.web3j.crypto.Wallet.createStandard(passphrase, childEcKeyPair);
+
+
+
         //String keystore = Singleton.get().gson.toJson(walletFile);
         JSONObject jsonObject = JSONObject.fromObject(walletFile);
 
@@ -165,25 +179,46 @@ public class MnemonicToKey {
 
     }
 
-    public static void main(String[] args) throws Exception {
+    public static ECKey eckeyTest() throws Exception {
+        NetworkParameters params = RegTestParams.get();
+        String passphrase = "";
         String seedCode = "tuna biology crawl bone bread chalk light there pattern borrow afraid inherit";
+        String strKeypath = "M/44H/0H/0H/0/0";
+        DeterministicKey key = getDeterministicKey(seedCode,passphrase,strKeypath);
+        BigInteger privKey = key.getPrivKey();
+
+        ECKey ecKey = ECKey.fromPrivate(privKey);
+
+        return ecKey;
+    }
+
+    public static void main(String[] args) throws Exception {
+        String seedCode = "marble ready camp mention verify panda stereo dwarf cigar bubble cheese quit";
         String btcKeyath = "M/44H/0H/0H/0/0";
         String ethKeyath = "M/44H/60H/0H/0/0";
+        //String btcKeyath = "M/44H/0H/1111111111H/0/0";
         //TestNet3Params
         //MainNetParams
-        NetworkParameters params = MainNetParams.get();
+        //RegTestParams
+        //NetworkParameters params = RegTestParams.get();
+
+
+        NetworkParameters params = RegTestParams.get();
         String bip44Address = MnemonicToKey.btc44Address(seedCode,"",params,btcKeyath);
         String bip49Address = MnemonicToKey.btc49Address(seedCode,"",params,btcKeyath);
 
         System.out.println("BIP44 Address：" +bip44Address);
         System.out.println("BIP49 Address：" +bip49Address);
 
+//        System.out.println(Address.fromBase58(params, bip49Address));
+//
 //mgcqjgfYxh4cVEzMqwDiUr8XRx1t8DhrGJ
 
-//        String ethAddrss = MnemonicToKey.ethAddress(seedCode,"",ethKeyath);
-        String ethAddrss = MnemonicToKey.ethPrivateKey(seedCode,"",ethKeyath);
+        String ethAddrss = MnemonicToKey.ethAddress(seedCode,"",ethKeyath);
+//        String ethAddrss = MnemonicToKey.ethPrivateKey(seedCode,"",ethKeyath);
+        System.out.println(ethAddrss);
 
-        MnemonicToKey.ethKeystore(seedCode,"hongliang",ethKeyath);
+        //MnemonicToKey.ethKeystore(seedCode,"hongliang",ethKeyath);
 
     }
 

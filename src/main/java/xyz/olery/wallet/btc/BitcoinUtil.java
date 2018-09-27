@@ -1,20 +1,27 @@
-package xyz.olery.wallet;
+package xyz.olery.wallet.btc;
 
 
 
 import com.google.common.base.Joiner;
+import com.google.common.util.concurrent.FutureCallback;
+import com.google.common.util.concurrent.Futures;
 import org.bitcoinj.core.*;
 import org.bitcoinj.crypto.DeterministicKey;
 import org.bitcoinj.kits.WalletAppKit;
 import org.bitcoinj.params.MainNetParams;
+import org.bitcoinj.params.RegTestParams;
 import org.bitcoinj.params.TestNet3Params;
 import org.bitcoinj.store.BlockStoreException;
 import org.bitcoinj.store.SPVBlockStore;
 import org.bitcoinj.wallet.*;
+import org.bitcoinj.wallet.listeners.WalletCoinsReceivedEventListener;
 import org.web3j.utils.Numeric;
+import xyz.olery.wallet.hd.MnemonicToKey;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.List;
@@ -22,15 +29,7 @@ import java.util.concurrent.ExecutionException;
 
 public class BitcoinUtil {
     public static final String passphrase = "";
-    /**
-     * 通过Wallet 获取 助记词
-     * @param wallet
-     * @return
-     */
-    public static List<String> getSeedWordsFromWallet(Wallet wallet){
-        DeterministicSeed seed = wallet.getKeyChainSeed();
-        return  seed.getMnemonicCode();
-    }
+
 
     /**
      * 通过私钥获取ECKey
@@ -80,75 +79,9 @@ public class BitcoinUtil {
     }
 //
 
-    //发送交易
-    public static void send(Wallet wallet,String recipientAddress, String amount){
-        //MainNetParams.get()
-        //TestNet3Params.get();
 
-        NetworkParameters params =TestNet3Params.get();
-        Address targetAddress  = Address.fromBase58(params, recipientAddress);
-        // Do the send of 1 BTC in the background. This could throw InsufficientMoneyException.
-        SPVBlockStore blockStore = null;
-        try {
-            blockStore = new SPVBlockStore(params, getBLockFile());
-        } catch (BlockStoreException e) {
-            e.printStackTrace();
-        }
-        BlockChain chain = null;
-        try {
-            chain = new BlockChain(params, wallet,blockStore);
-            PeerGroup peerGroup = new PeerGroup(params, chain);
-            try {
-                Wallet.SendResult result = wallet.sendCoins(peerGroup, targetAddress, Coin.parseCoin(amount));
-                // Save the wallet to disk, optional if using auto saving (see below).
-                //wallet.saveToFile(....);
-                // Wait for the transaction to propagate across the P2P network, indicating acceptance.
-                try {
-                    Transaction transaction = result.broadcastComplete.get();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                } catch (ExecutionException e) {
-                    e.printStackTrace();
-                }
-                return;
-            } catch (InsufficientMoneyException e) {
-                e.printStackTrace();
-            }
-        } catch (BlockStoreException e) {
-            e.printStackTrace();
-        }
-    }
 
-    public static  String send(WalletAppKit walletAppKit, String recipientAddress, String amount){
-        //MainNetParams.get()
-        //TestNet3Params.get();
-        NetworkParameters params =TestNet3Params.get();
-        String err = "";
-        //YuHL
-//        if(TextUtils.isEmpty(recipientAddress) || recipientAddress.equals("Scan recipient QR")) {
-//            err = "Select recipient";
-//            return err;
-//        }
-//        if(TextUtils.isEmpty(amount) | Double.parseDouble(amount) <= 0) {
-//            err = "Select valid amount";
-//            return err;
-//
-//        }
-        if(walletAppKit.wallet().getBalance().isLessThan(Coin.parseCoin(amount))) {
-            err = "You got not enough coins";
-            return err;
-        }
-        SendRequest request = SendRequest.to(Address.fromBase58(params, recipientAddress), Coin.parseCoin(amount));
-        try {
-            walletAppKit.wallet().completeTx(request);
-            walletAppKit.wallet().commitTx(request.tx);
-            walletAppKit.peerGroup().broadcastTransaction(request.tx).broadcast();
-            return "";
-        } catch (InsufficientMoneyException e) {
-            e.printStackTrace();
-            return  e.getMessage();
-        }
-    }
+
 
 //
 //
@@ -263,43 +196,83 @@ public class BitcoinUtil {
 //
 //    }
 //
-    public static void test(){
-        NetworkParameters params = TestNet3Params.get();
-        DeterministicSeed seed = new DeterministicSeed(new SecureRandom(),128,"123456",Utils.currentTimeSeconds());
-        List<String> mnemonicCode = seed.getMnemonicCode();
-//        LogUtil.e("mnemonicCode"+mnemonicCode);
-//       byte[] bytes = MnemonicCode.toSeed(mnemonicCode, "123456");
-        Wallet wallet = Wallet.fromSeed(params,seed);
-    }
+//    public static void test(){
+//        NetworkParameters params = TestNet3Params.get();
+//        DeterministicSeed seed = new DeterministicSeed(new SecureRandom(),128,"123456",Utils.currentTimeSeconds());
+//        List<String> mnemonicCode = seed.getMnemonicCode();
+////        LogUtil.e("mnemonicCode"+mnemonicCode);
+////       byte[] bytes = MnemonicCode.toSeed(mnemonicCode, "123456");
+//        Wallet wallet = Wallet.fromSeed(params,seed);
+//    }
 //
-    public static void test2(ECKey ceKey){
-        //MainNetParams.get()
-        //TestNet3Params.get();
-        NetworkParameters params =TestNet3Params.get();
-        String s = ceKey.toAddress(params).toBase58().toString();
-        String privateKeyAsWiF = ceKey.getPrivateKeyAsWiF(params);// 私钥， WIF(Wallet Import Format)
-//        LogUtil.e(privateKeyAsWiF+"=========="+s);
-    }
+//    public static void test2(ECKey ceKey){
+//        //MainNetParams.get()
+//        //TestNet3Params.get();
+//        NetworkParameters params =TestNet3Params.get();
+//        String s = ceKey.toAddress(params).toBase58().toString();
+//        String privateKeyAsWiF = ceKey.getPrivateKeyAsWiF(params);// 私钥， WIF(Wallet Import Format)
+////        LogUtil.e(privateKeyAsWiF+"=========="+s);
+//    }
 //
 //
 //
     //通过私钥拿到eckey
-    public static ECKey getECkey(String prikey){
-        //MainNetParams.get()
-        //TestNet3Params.get();
-        NetworkParameters params =TestNet3Params.get();
-        ECKey key = DumpedPrivateKey.fromBase58(params, prikey).getKey();
-        return key;
+//    public static ECKey getECkey(String prikey){
+//        //MainNetParams.get()
+//        //TestNet3Params.get();
+//        NetworkParameters params =TestNet3Params.get();
+//        ECKey key = DumpedPrivateKey.fromBase58(params, prikey).getKey();
+//        return key;
+//    }
+//
+//
+//    //通过助记词导入新钱包
+//    public static Wallet createWallet(String seedCode,String password) {
+//        //MainNetParams.get()
+//        //TestNet3Params.get();
+//        NetworkParameters params =TestNet3Params.get();
+//
+//
+//        KeyChainGroup kcg;
+//        DeterministicSeed deterministicSeed = null;
+//        try {
+//            deterministicSeed = new DeterministicSeed(seedCode, null, password, Utils.currentTimeSeconds());
+//        } catch (UnreadableWalletException e) {
+//            e.printStackTrace();
+//        }
+//        kcg = new KeyChainGroup(params, deterministicSeed);
+//        Wallet wallet = new Wallet(params, kcg);
+//        return wallet;
+//    }
+//
+//    //创建新钱包。
+//    public static Wallet createWallet2() {
+//        //MainNetParams.get()
+//        //TestNet3Params.get();
+//        NetworkParameters params =TestNet3Params.get();
+//        KeyChainGroup kcg = new KeyChainGroup(params);
+//        Wallet wallet = new Wallet(params, kcg);
+//        wallet.getParams().getId();
+//
+//        return wallet;
+//
+//    }
+//
+
+    public static void main(String[] args) throws Exception {
+
+//        //NetworkParameters params = RegTestParams.get();
+//        NetworkParameters params = MainNetParams.get();
+//
+//        Wallet wallet = createWallet(params,"tuna biology crawl bone bread chalk light there pattern borrow afraid inherit","");
+//        //myrDAeDxa2TA2s5LUQcBnxKrRZz57XaUHo
+//        //myrDAeDxa2TA2s5LUQcBnxKrRZz57XaUHo
+//       // System.out.println(wallet.getImportedKeys().get(0).toAddress(params).toBase58());
+//        System.out.println(wallet.getKeyChainSeed().getMnemonicCode());
+
+
     }
-//
-//
-    //通过助记词导入新钱包
-    public static Wallet createWallet(String seedCode,String password) {
-        //MainNetParams.get()
-        //TestNet3Params.get();
-        NetworkParameters params =TestNet3Params.get();
-
-
+    public static Wallet createWallet(NetworkParameters params,String seedCode,String password) {
         KeyChainGroup kcg;
         DeterministicSeed deterministicSeed = null;
         try {
@@ -310,66 +283,10 @@ public class BitcoinUtil {
         kcg = new KeyChainGroup(params, deterministicSeed);
         Wallet wallet = new Wallet(params, kcg);
         return wallet;
-    }
-//
-    //创建新钱包。
-    public static Wallet createWallet2() {
-        //MainNetParams.get()
-        //TestNet3Params.get();
-        NetworkParameters params =TestNet3Params.get();
-        KeyChainGroup kcg = new KeyChainGroup(params);
-        Wallet wallet = new Wallet(params, kcg);
-        wallet.getParams().getId();
-
-        return wallet;
 
     }
-//
-//    //通过助记词
-//    public static WalletAppKit getWalletKit(Context context,String seedcode){
-//        WalletAppKit walletAppKit = new WalletAppKit(getParams(), context.getCacheDir(), Constant.WALLET_NAME) {
-//            @Override
-//            protected void onSetupCompleted() {
-//                if (wallet().getImportedKeys().size() < 1) wallet().importKey(new ECKey());
-//                wallet().allowSpendingUnconfirmedTransactions();
-//                setupWalletListeners(wallet());
-//                ECKey ecKey = wallet().getImportedKeys().get(0);
-////                LogUtil.e(getPubKeyFrom(ecKey));
-////                test2(ecKey);
-////                //打印助记词
-//                List<String> seedWordsFromWallet = getSeedWordsFromWallet(wallet());
-////                LogUtil.e(seedWordsFromWallet.toString());
-//                //当前地址
-//                String s1 = wallet().currentReceiveAddress().toBase58();
-//
-//                // String s2 = wallet().currentChangeAddress().toBase58();
-//                String privateKeyAsWiF = wallet().currentReceiveKey().getPrivateKeyAsWiF(getParams());
-////                LogUtil.e("currentReceiveAddress="+s1+"===privateKeyAsWiF="+privateKeyAsWiF);
-//                //LogUtil.e("freshReceiveAddress="+s+"==="+"currentReceiveAddress="+s1);
-//            }
-//        };
-////
-////
-//        walletAppKit.setAutoSave(true);
-//        walletAppKit.setBlockingStartup(false);
-//
-//        setDownListener(walletAppKit);
-//        if (getParams() == RegTestParams.get()) {
-//            AppContext.walletAppKit.connectToLocalHost();
-//        }
-//        if(!StringUtils.isEmpty(seedcode)){
-//            try {
-//                DeterministicSeed seed = new DeterministicSeed(seedcode, null, passphrase,Utils.currentTimeSeconds());
-//                walletAppKit.restoreWalletFromSeed(seed);
-//            } catch (UnreadableWalletException e) {
-//                e.printStackTrace();
-//            }
-//
-//        }
-//        walletAppKit.startAsync();
-//        walletAppKit.awaitRunning();
-//        return  walletAppKit;
-//    }
+
+
 //
 //    //加载本地文件
 //    public static WalletAppKit getWalletKit(Context context){
@@ -399,23 +316,7 @@ public class BitcoinUtil {
 //        });
 //    }
 ////
-//    public  static void  setupWalletListeners(Wallet wallet) {
-//        wallet.addCoinsReceivedEventListener((wallet1, tx, prevBalance, newBalance) -> {
-//            String s = wallet.getBalance().toFriendlyString();
-//            String s1 = "";
-//            if(tx.getPurpose() == Transaction.Purpose.UNKNOWN) {
-//                s1 = newBalance.minus(prevBalance).toFriendlyString();
-//            }
-//            LogUtil.e(s+"==="+s1);
-//        });
-//        wallet.addCoinsSentEventListener((wallet12, tx, prevBalance, newBalance) -> {
-//            String s = wallet.getBalance().toFriendlyString();
-//            String s1 = "Sent "+prevBalance.minus(newBalance).minus(tx.getFee()).toFriendlyString();
-//            LogUtil.e(s+"==="+s1);
-//        });
-//
-//
-//    }
+
 //
 //    public void Test() {
 //
@@ -487,3 +388,5 @@ public class BitcoinUtil {
 //        }
 //    }
 }
+
+
