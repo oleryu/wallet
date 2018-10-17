@@ -1,12 +1,6 @@
 package xyz.olery.wallet.eth.erc20;
 
-import org.bitcoinj.crypto.ChildNumber;
-import org.bitcoinj.crypto.DeterministicKey;
-import org.bitcoinj.crypto.HDUtils;
-import org.bitcoinj.wallet.DeterministicKeyChain;
-import org.bitcoinj.wallet.DeterministicSeed;
 import org.web3j.abi.FunctionEncoder;
-import org.web3j.abi.FunctionReturnDecoder;
 import org.web3j.abi.TypeReference;
 import org.web3j.abi.datatypes.Address;
 import org.web3j.abi.datatypes.Function;
@@ -18,18 +12,16 @@ import org.web3j.crypto.RawTransaction;
 import org.web3j.crypto.TransactionEncoder;
 import org.web3j.protocol.Web3j;
 import org.web3j.protocol.core.DefaultBlockParameterName;
-import org.web3j.protocol.core.methods.request.Transaction;
 import org.web3j.protocol.core.methods.response.*;
 import org.web3j.protocol.http.HttpService;
 import org.web3j.utils.Convert;
 import org.web3j.utils.Numeric;
+import xyz.olery.wallet.eth.account.WalletAccount;
+import xyz.olery.wallet.eth.account.WalletInfo;
 
-import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 
 /**
  * oleryu
@@ -39,7 +31,6 @@ public class ContractTokenTxSign {
 
     static BigInteger GAS_PRICE = BigInteger.valueOf(22_000_000_000L);
     static BigInteger GAS_LIMIT = BigInteger.valueOf(300_300_000);
-
 
     static byte chainId = (byte)15;
 

@@ -1,4 +1,4 @@
-package xyz.olery.wallet.eth.erc20;
+package xyz.olery.wallet.eth.account;
 
 import org.web3j.protocol.Web3j;
 import org.web3j.protocol.core.DefaultBlockParameterName;

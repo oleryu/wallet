@@ -1,4 +1,4 @@
-package xyz.olery.wallet.eth.erc20;
+package xyz.olery.wallet.eth.account;
 
 import org.bitcoinj.crypto.ChildNumber;
 import org.bitcoinj.crypto.DeterministicKey;
