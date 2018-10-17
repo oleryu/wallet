@@ -32,12 +32,9 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * oleryu
- * 2018/10/17
- * 查询余额
+ * oleryu 2018/10/17
  *
- * 详见：https://blog.csdn.net/fangdengfu123/article/details/82181091  转账失败
- *       https://www.jianshu.com/p/8ae984e6bafc                        转账成功
+ * 查询合约代币余额
  * */
 public class ContractTokenBalance {
     public static void main(String[] args) throws Exception {
