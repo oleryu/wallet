@@ -26,7 +26,6 @@ import java.math.BigInteger;
 import java.util.List;
 
 public class MnemonicToKey {
-
     public static Script segWitRedeemScript(ECKey ecKey)    {
         //
         // The P2SH segwit redeemScript is always 22 bytes. It starts with a OP_0, followed by a canonical push of the keyhash (i.e. 0x0014{20-byte keyhash})
@@ -100,7 +99,7 @@ public class MnemonicToKey {
         BigInteger privKey = key.getPrivKey();
 
         ECKey ecKey = ECKey.fromPrivate(privKey);
-        System.out.println(ecKey.getPrivKey());
+
         Address address = ecKey.toAddress(params);
 
         return address.toBase58();
@@ -136,8 +135,6 @@ public class MnemonicToKey {
 
         //BigInteger privKey = key.getPrivKey();
         System.out.println(key.getPrivateKeyAsHex());
-
-//
 
         return "";
 
@@ -189,20 +186,19 @@ public class MnemonicToKey {
 
         ECKey ecKey = ECKey.fromPrivate(privKey);
 
+
         return ecKey;
     }
 
     public static void main(String[] args) throws Exception {
-        String seedCode = "marble ready camp mention verify panda stereo dwarf cigar bubble cheese quit";
+        //String seedCode = "marble ready camp mention verify panda stereo dwarf cigar bubble cheese quit";
+        //String seedCode = "marble ready camp mention verify panda stereo dwarf cigar bubble cheese quit";
+        String seedCode = "dilemma aspect clog craft mercy record flavor child confirm arena hint catalog";
         String btcKeyath = "M/44H/0H/0H/0/0";
         String ethKeyath = "M/44H/60H/0H/0/0";
-        //String btcKeyath = "M/44H/0H/1111111111H/0/0";
         //TestNet3Params
         //MainNetParams
         //RegTestParams
-        //NetworkParameters params = RegTestParams.get();
-
-
         NetworkParameters params = RegTestParams.get();
         String bip44Address = MnemonicToKey.btc44Address(seedCode,"",params,btcKeyath);
         String bip49Address = MnemonicToKey.btc49Address(seedCode,"",params,btcKeyath);
@@ -210,34 +206,7 @@ public class MnemonicToKey {
         System.out.println("BIP44 Address：" +bip44Address);
         System.out.println("BIP49 Address：" +bip49Address);
 
-//        System.out.println(Address.fromBase58(params, bip49Address));
-//
-//mgcqjgfYxh4cVEzMqwDiUr8XRx1t8DhrGJ
-
         String ethAddrss = MnemonicToKey.ethAddress(seedCode,"",ethKeyath);
-//        String ethAddrss = MnemonicToKey.ethPrivateKey(seedCode,"",ethKeyath);
-        System.out.println(ethAddrss);
-
-        //MnemonicToKey.ethKeystore(seedCode,"hongliang",ethKeyath);
-
+        System.out.println("ETH Address: " + ethAddrss);
     }
-
-
-
-//    public String getBech32AsString(ECKey ecKey)    {
-//
-//        String address = null;
-//
-//        try {
-//            address = Bech32Segwit.encode(NetworkParameters.prodNet()
-//                    instanceof TestNet3Params ? "tb" : "bc", (byte)0x00, Utils.sha256hash160(ecKey.getPubKey()));
-//        }
-//        catch(Exception e) {
-//            ;
-//        }
-//
-//        return address;
-//    }
-
-
 }

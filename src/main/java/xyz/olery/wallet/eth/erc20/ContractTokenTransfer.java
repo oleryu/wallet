@@ -2,7 +2,8 @@ package xyz.olery.wallet.eth.erc20;
 
 import org.web3j.protocol.Web3j;
 import org.web3j.protocol.http.HttpService;
-import xyz.olery.wallet.eth.account.WalletAccount;
+import xyz.olery.wallet.eth.Web3Util;
+import xyz.olery.wallet.eth.account.HDWalletAccount;
 import xyz.olery.wallet.eth.account.WalletInfo;
 
 import java.math.BigDecimal;
@@ -19,9 +20,6 @@ public class ContractTokenTransfer {
     static byte chainId = (byte)15;
 
 
-
-
-
     public static void main(String[] args) throws Exception {
         String contractAddress = "0x9ffC9F2913857A8C3442965a4c6A48c8eb47B53E";
 
@@ -29,21 +27,21 @@ public class ContractTokenTransfer {
         String ethKeypath = "M/44H/60H/0H/0/0";
         String passphrase = "";
 
-        WalletAccount walletAccount = new WalletAccount(seedCode,ethKeypath,passphrase);
+        HDWalletAccount walletAccount = new HDWalletAccount(seedCode,ethKeypath,passphrase);
 
         //地址形如："0x0E0595e85300Df7c264ba7E361372440EEFf7D36";
-        String address = walletAccount.ethAddress(seedCode,passphrase,ethKeypath);
+        String address = walletAccount.ethAddress();
         System.out.println("|LOCAL_ETH_ADDRESS|: " + address);
 
         //地址形如："0x4fee2588626adfc7839de2513077242db3b8a818";
         String targetAddress =  "0xfabb82f3de8de110189f352e9a1c7fbd8b467312";
 
-        String privateKey = walletAccount.getPrivateKey(seedCode,ethKeypath);
+        String privateKey = walletAccount.getPrivateKey().toString(16);
         System.out.println("|LOCAL_ADDRESS_PRIVATEKEY|: " + address);
 
         long amount = 10;
 
-        Web3j web3j = Web3j.build(new HttpService("http://192.168.10.168:8545"));
+        Web3j web3j = Web3Util.web3j;
 
         BigDecimal ethBalance = WalletInfo.getBalance(web3j, address);
         System.out.println("ETH_BALANCE: " + ethBalance);
@@ -61,6 +59,8 @@ public class ContractTokenTransfer {
                 contractAddress,
                 amount);
 
+        String tx = ContractTokenTxSend.transferToken(web3j,hexvalue);
+        System.out.println("交易流水号：" + tx);
     }
 
 

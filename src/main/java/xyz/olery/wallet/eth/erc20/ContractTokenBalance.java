@@ -23,6 +23,7 @@ import org.web3j.protocol.core.methods.response.*;
 import org.web3j.protocol.http.HttpService;
 import org.web3j.utils.Convert;
 import org.web3j.utils.Numeric;
+import xyz.olery.wallet.eth.Web3Util;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -37,18 +38,6 @@ import java.util.List;
  * 查询合约代币余额
  * */
 public class ContractTokenBalance {
-    public static void main(String[] args) throws Exception {
-        Web3j web3j = Web3j.build(new HttpService("http://192.168.10.168:8545"));
-
-        String address = "0xd3d3142baa2a88dcbda1d8f93de8e0f70fef12a3";
-        String contractAddress= "0x9ffC9F2913857A8C3442965a4c6A48c8eb47B53E";
-
-        BigInteger myTokenBalance1 = getTokenBalance(web3j,address,contractAddress);
-        System.out.println("MY_TOKEN_BALANCE: " + myTokenBalance1);
-
-        BigInteger myTokenBalance2 = balanceOf(web3j,address,contractAddress);
-        System.out.println("MY_TOKEN_BALANCE: " + myTokenBalance2);
-    }
 
     public static BigInteger getTokenBalance(Web3j web3j,String fromAddress, String contractAddress) {
 

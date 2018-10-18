@@ -12,7 +12,7 @@ import org.web3j.protocol.core.methods.request.Transaction;
 import org.web3j.protocol.core.methods.response.EthEstimateGas;
 import org.web3j.protocol.core.methods.response.EthGetTransactionCount;
 import org.web3j.protocol.http.HttpService;
-import xyz.olery.wallet.eth.account.WalletAccount;
+import xyz.olery.wallet.eth.account.HDWalletAccount;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -115,10 +115,10 @@ public class TransactionUtil {
         String contractAddress = "0x9ffC9F2913857A8C3442965a4c6A48c8eb47B53E";
         String toAddr =  "0xfabb82f3de8de110189f352e9a1c7fbd8b467312";
 
-        WalletAccount account = new WalletAccount(seedCode,ethKeypath,passphrase);
+        HDWalletAccount account = new HDWalletAccount(seedCode,ethKeypath,passphrase);
 
 
-        String fromAddr = account.ethAddress(seedCode,passphrase,ethKeypath);
+        String fromAddr = account.ethAddress();
         long amount = 10;
 
 

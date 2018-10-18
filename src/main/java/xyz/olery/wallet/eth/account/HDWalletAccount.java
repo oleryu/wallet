@@ -13,49 +13,65 @@ import java.util.List;
 /**
  *  oleryu 2018/10/17
  */
-public class WalletAccount {
+public class HDWalletAccount {
 
     private String seedCode;
     /* M/44H/60H/0H/0/0 */
     private String keypath;
     private String passphrase;
 
-    public WalletAccount(String seedCode,String keypath,String passphrase) {
-        this.seedCode = seedCode;
-        this.keypath = keypath;
-        this.passphrase = passphrase;
+
+    private Credentials credentials;
+    public Credentials getCredentials() {
+        return credentials;
     }
 
-    public static String getPrivateKey(String seedCode,String ethKeyath) throws Exception {
-        DeterministicSeed seed = new DeterministicSeed(seedCode, null, "", 1409478661L);
-        DeterministicKeyChain chain = DeterministicKeyChain.builder().seed(seed).build();
-        List<ChildNumber> keyPath = HDUtils.parsePath(ethKeyath);
-        DeterministicKey key = chain.getKeyByPath(keyPath, true);
+    public Credentials loadCredentials(String seedCode,String passphrase,String strKeypath) throws Exception {
+
+        DeterministicKey key = getDeterministicKey();
+
         BigInteger privKey = key.getPrivKey();
 
         // Web3j
         Credentials credentials = Credentials.create(privKey.toString(16));
+
         String address = credentials.getAddress();
         String privateKey = privKey.toString(16);
+
+        return credentials;
+
+    }
+
+
+    public HDWalletAccount(String seedCode, String keypath, String passphrase) {
+        this.seedCode = seedCode;
+        this.keypath = keypath;
+        this.passphrase = passphrase;
+        try {
+            DeterministicKey key = getDeterministicKey();
+            BigInteger privKey = key.getPrivKey();
+
+            // Web3j
+            this.credentials = Credentials.create(privKey.toString(16));
+            String address = credentials.getAddress();
+            String privateKey = privKey.toString(16);
+        } catch (Exception e) {}
+
+    }
+
+
+    public  BigInteger getPrivateKey()  {
+        BigInteger privateKey = credentials.getEcKeyPair().getPrivateKey();
 
         return privateKey;
     }
 
-    public static String ethAddress(String seedCode,String passphrase,String strKeypath) throws Exception {
-
-        DeterministicKey key = getDeterministicKey(seedCode,passphrase,strKeypath);
-
-        BigInteger privKey = key.getPrivKey();
-
-        // Web3j
-        Credentials credentials = Credentials.create(privKey.toString(16));
-        String address = credentials.getAddress();
-        String privateKey = privKey.toString(16);
+    public  String ethAddress() throws Exception {
         return credentials.getAddress();
 
     }
 
-    public static DeterministicKey getDeterministicKey(String seedCode,String passphrase,String strKeypath) throws Exception{
+    public  DeterministicKey getDeterministicKey() throws Exception{
         //String seedCode = "tuna biology crawl bone bread chalk light there pattern borrow afraid inherit";
 
         // BitcoinJ
@@ -63,7 +79,7 @@ public class WalletAccount {
         DeterministicKeyChain chain = DeterministicKeyChain.builder().seed(seed).build();
         //"M/44H/0H/0H/0/0"
         //"M/44H/60H/0H/0/0"
-        List<ChildNumber> keyPath = HDUtils.parsePath(strKeypath);
+        List<ChildNumber> keyPath = HDUtils.parsePath(keypath);
 
         DeterministicKey key = chain.getKeyByPath(keyPath, true);
 
