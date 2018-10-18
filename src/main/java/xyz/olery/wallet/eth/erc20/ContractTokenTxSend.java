@@ -32,7 +32,8 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- *  oleryu 2018/10/17
+ * ...
+ * @oleryu.xyz
  */
 public class ContractTokenTxSend {
 

@@ -17,7 +17,10 @@ import xyz.olery.wallet.eth.account.HDWalletAccount;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 
-
+/**
+ * ...
+ * @oleryu.xyz
+ */
 public class TransSignByHDWallet {
     //设置需要的矿工费
     public static BigInteger GAS_PRICE = BigInteger.valueOf(22_000_000_000L);

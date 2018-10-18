@@ -11,6 +11,10 @@ import org.web3j.utils.Convert;
 import java.io.File;
 import java.math.BigDecimal;
 
+/**
+ * ...
+ * @oleryu.xyz
+ */
 public class FileWalletUtil {
     public static void generateNewWalletFile(String password,String pathname) throws Exception {
         //File file = new File("D://home/wallet");

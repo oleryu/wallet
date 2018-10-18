@@ -23,7 +23,10 @@ import java.math.BigInteger;
 
 import static xyz.olery.wallet.eth.Web3Util.web3j;
 
-
+/**
+ * ...
+ * @oleryu.xyz
+ */
 public class TransactionSender {
 
     public static void main(String[] args) {

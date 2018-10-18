@@ -10,8 +10,9 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 
 /**
- *
- * */
+ * ...
+ * @oleryu.xyz
+ */
 public class ContractTokenTransfer {
 
     static BigInteger GAS_PRICE = BigInteger.valueOf(22_000_000_000L);
@@ -52,12 +53,13 @@ public class ContractTokenTransfer {
         BigInteger targetBalanceValue = ContractTokenBalance.getTokenBalance(web3j,targetAddress,contractAddress);
         System.out.println("TARGET_TOKEN_BALANCE_2: " + targetBalanceValue);
 
+
         String hexvalue = ContractTokenTxSign.signedTokenTransfer(web3j,
                 address,
                 privateKey,
                 targetAddress,
                 contractAddress,
-                amount);
+                BigInteger.valueOf(amount));
 
         String tx = ContractTokenTxSend.transferToken(web3j,hexvalue);
         System.out.println("交易流水号：" + tx);

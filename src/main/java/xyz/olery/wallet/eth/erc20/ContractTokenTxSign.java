@@ -25,9 +25,9 @@ import java.math.BigInteger;
 import java.util.Arrays;
 
 /**
- * oleryu
- *
- * */
+ * ...
+ * @oleryu.xyz
+ */
 public class ContractTokenTxSign {
 
     static BigInteger GAS_PRICE = BigInteger.valueOf(22_000_000_000L);
@@ -56,9 +56,9 @@ public class ContractTokenTxSign {
         String privateKey = walletAccount.getPrivateKey().toString(16);
         System.out.println("|LOCAL_ADDRESS_PRIVATEKEY|: " + privateKey);
 
+
+
         long amount = 10;
-
-
 
         BigDecimal ethBalance = WalletInfo.getBalance(web3j, address);
         System.out.println("ETH_BALANCE: " + ethBalance);
@@ -74,7 +74,7 @@ public class ContractTokenTxSign {
                 privateKey,
                 targetAddress,
                 contractAddress,
-                amount);
+                BigInteger.valueOf(amount));
 
     }
 
@@ -85,7 +85,7 @@ public class ContractTokenTxSign {
                                        String privateKey,
                                        String targetAddress,
                                        String contractAddress,
-                                       long amount) throws Exception {
+                                             BigInteger amount) throws Exception {
 
         ECKeyPair ecKeyPair = ECKeyPair.create(new BigInteger(privateKey, 16));
         Credentials credentials = Credentials.create(ecKeyPair);
@@ -98,7 +98,7 @@ public class ContractTokenTxSign {
         //val 转账金额
         Function function = new Function(
                 "transfer",
-                Arrays.asList(new Address(targetAddress), new Uint256(new BigInteger("10"))),
+                Arrays.asList(new Address(targetAddress), new Uint256(amount)),
                 Arrays.asList(new TypeReference<Type>() {
                 }));
 

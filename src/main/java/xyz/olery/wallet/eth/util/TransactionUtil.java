@@ -1,4 +1,4 @@
-package xyz.olery.wallet.eth.erc20;
+package xyz.olery.wallet.eth.util;
 
 import org.web3j.abi.FunctionEncoder;
 import org.web3j.abi.TypeReference;
@@ -6,18 +6,21 @@ import org.web3j.abi.datatypes.Address;
 import org.web3j.abi.datatypes.Function;
 import org.web3j.abi.datatypes.Type;
 import org.web3j.abi.datatypes.generated.Uint256;
+import org.web3j.crypto.RawTransaction;
 import org.web3j.protocol.Web3j;
 import org.web3j.protocol.core.DefaultBlockParameterName;
 import org.web3j.protocol.core.methods.request.Transaction;
 import org.web3j.protocol.core.methods.response.EthEstimateGas;
 import org.web3j.protocol.core.methods.response.EthGetTransactionCount;
 import org.web3j.protocol.http.HttpService;
+import org.web3j.utils.Convert;
 import xyz.olery.wallet.eth.account.HDWalletAccount;
 
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 
@@ -76,18 +79,15 @@ public class TransactionUtil {
                                                          String toAddr,
                                                          String contractAddr,
                                                          long amount) {
-        // 构建方法调用信息
-        String method = "transfer";
+        //val 转账金额
+        Function function = new Function(
+                "transfer",
+                Arrays.asList(new Address(toAddr), new Uint256(amount)),
+                Arrays.asList(new TypeReference<Type>() {
+                }));
 
-        // 构建输入参数
-        List<Type> inputArgs = new ArrayList<>();
-        inputArgs.add(new Address(toAddr));
-        inputArgs.add(new Uint256(BigDecimal.valueOf(amount).multiply(BigDecimal.TEN.pow(18)).toBigInteger()));
+        String funcABI = FunctionEncoder.encode(function);
 
-        // 合约返回值容器
-        List<TypeReference<?>> outputArgs = new ArrayList<>();
-
-        String funcABI = FunctionEncoder.encode(new Function(method, inputArgs, outputArgs));
         //构造合约调用交易
         Transaction transaction = Transaction.createFunctionCallTransaction(
                 fromAddr,
@@ -99,52 +99,5 @@ public class TransactionUtil {
         return getGasLimitByTransaction(web3j,transaction);
     }
 
-    /**
-     * Estimate GasLimit
-     * @param args     -
-     * @throws Exception
-     */
-    public static void testTokenTransactionGasLimit(String[] args) throws Exception {
-        String seedCode = "legend finger master ordinary soccer stomach predict alone drift foot piano address";
-        String ethKeypath = "M/44H/60H/0H/0/0";
-        String passphrase = "";
-
-
-
-        Web3j web3j = Web3j.build(new HttpService("http://192.168.10.168:8545"));
-        String contractAddress = "0x9ffC9F2913857A8C3442965a4c6A48c8eb47B53E";
-        String toAddr =  "0xfabb82f3de8de110189f352e9a1c7fbd8b467312";
-
-        HDWalletAccount account = new HDWalletAccount(seedCode,ethKeypath,passphrase);
-
-
-        String fromAddr = account.ethAddress();
-        long amount = 10;
-
-
-        EthGetTransactionCount ethGetTransactionCount = web3j.ethGetTransactionCount(
-                fromAddr, DefaultBlockParameterName.LATEST).sendAsync().get();
-
-        BigInteger nonce = ethGetTransactionCount.getTransactionCount();
-        BigInteger gasPrice = BigInteger.valueOf(22_000_000_000L);
-        BigInteger gasLimit = TransactionUtil.getTokenTransactionGasLimit(web3j,
-                fromAddr,
-                nonce,
-                gasPrice,
-                toAddr,
-                contractAddress,
-        amount);
-
-        System.out.println(gasLimit);
-
-    }
-
-    public static void main(String[] args) throws Exception {
-
-        testTokenTransactionGasLimit(args);
-
-
-
-    }
 
 }

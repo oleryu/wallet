@@ -21,6 +21,10 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.List;
 
+/**
+ * ...
+ * @oleryu.xyz
+ */
 public class HDWalletUtil {
     //-------------------------------------------------------------------------------------------------------
     private static void loadWallet() throws Exception {
