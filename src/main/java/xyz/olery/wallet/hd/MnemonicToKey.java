@@ -193,15 +193,15 @@ public class MnemonicToKey {
     public static void main(String[] args) throws Exception {
         //String seedCode = "marble ready camp mention verify panda stereo dwarf cigar bubble cheese quit";
         //String seedCode = "marble ready camp mention verify panda stereo dwarf cigar bubble cheese quit";
-        String seedCode = "dilemma aspect clog craft mercy record flavor child confirm arena hint catalog";
+        String seedCode = "beach off supreme nut route glide busy beef grass solve crater dry";
         String btcKeyath = "M/44H/0H/0H/0/0";
         String ethKeyath = "M/44H/60H/0H/0/0";
         //TestNet3Params
         //MainNetParams
         //RegTestParams
         NetworkParameters params = RegTestParams.get();
-        String bip44Address = MnemonicToKey.btc44Address(seedCode,"",params,btcKeyath);
-        String bip49Address = MnemonicToKey.btc49Address(seedCode,"",params,btcKeyath);
+        String bip44Address = MnemonicToKey.btc44Address(seedCode,"12345678",params,btcKeyath);
+        String bip49Address = MnemonicToKey.btc49Address(seedCode,"12345678",params,btcKeyath);
 
         System.out.println("BIP44 Address：" +bip44Address);
         System.out.println("BIP49 Address：" +bip49Address);
