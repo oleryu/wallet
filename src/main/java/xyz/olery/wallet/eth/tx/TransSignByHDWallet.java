@@ -22,9 +22,7 @@ import java.math.BigInteger;
  * @oleryu.xyz
  */
 public class TransSignByHDWallet {
-    //设置需要的矿工费
-    public static BigInteger GAS_PRICE = BigInteger.valueOf(22_000_000_000L);
-    public static BigInteger GAS_LIMIT = BigInteger.valueOf(4_300_000);
+    //设置需要的矿工
 
     public static void main(String[] args) throws Exception {
         //创建交易，这里是转0.5个以太币
@@ -43,12 +41,18 @@ public class TransSignByHDWallet {
         Web3j web3j = Web3Util.web3j;
         String toAddress = "0xb1aba410f569288102dd7a1f1527c40eadef7fb9";
 
-        String transactionHash = signTx(web3j,walletAccount,toAddress,value);
+        BigInteger gasPrice = Convert.toWei("18", Convert.Unit.GWEI).toBigInteger();
+        BigInteger gasLimit = Convert.toWei("100000", Convert.Unit.WEI).toBigInteger();
+
+        String transactionHash = signTx(web3j,walletAccount,toAddress,value,gasPrice,gasLimit);
 
     }
 
 
-    public static String signTx(Web3j web3j,HDWalletAccount walletAccount,String toAddress,BigInteger value) throws Exception {
+    public static String signTx(Web3j web3j,
+                                HDWalletAccount walletAccount,
+                                String toAddress,
+                                BigInteger value,BigInteger gasPrice,BigInteger gasLimit) throws Exception {
 
         //被转人账户地址
         //String toAddress = "0xb1aba410f569288102dd7a1f1527c40eadef7fb9";
@@ -65,8 +69,9 @@ public class TransSignByHDWallet {
         BigInteger nonce = ethGetTransactionCount.getTransactionCount();
 
 
+
         RawTransaction rawTransaction = RawTransaction.createEtherTransaction(
-                nonce, GAS_PRICE, GAS_LIMIT, toAddress, value);
+                nonce, gasPrice, gasLimit, toAddress, value);
 
         //签名Transaction，这里要对交易做签名
         byte[] signedMessage = TransactionEncoder.signMessage(rawTransaction, credentials);

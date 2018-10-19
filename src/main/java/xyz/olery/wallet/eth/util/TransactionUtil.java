@@ -87,13 +87,13 @@ public class TransactionUtil {
                 }));
 
         String funcABI = FunctionEncoder.encode(function);
-
+        BigInteger gasLimit=  BigInteger.valueOf(300_300_000);
         //构造合约调用交易
         Transaction transaction = Transaction.createFunctionCallTransaction(
                 fromAddr,
                 nonce,
                 gasPrice,
-                null,
+                gasLimit,
                 contractAddr,
                 funcABI);
         return getGasLimitByTransaction(web3j,transaction);

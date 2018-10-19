@@ -2,6 +2,7 @@ package xyz.olery.wallet.eth.erc20;
 
 import org.web3j.protocol.Web3j;
 import org.web3j.protocol.http.HttpService;
+import org.web3j.utils.Convert;
 import xyz.olery.wallet.eth.Web3Util;
 import xyz.olery.wallet.eth.account.HDWalletAccount;
 import xyz.olery.wallet.eth.account.WalletInfo;
@@ -14,9 +15,6 @@ import java.math.BigInteger;
  * @oleryu.xyz
  */
 public class ContractTokenTransfer {
-
-    static BigInteger GAS_PRICE = BigInteger.valueOf(22_000_000_000L);
-    static BigInteger GAS_LIMIT = BigInteger.valueOf(300_300_000);
 
     static byte chainId = (byte)15;
 
@@ -53,13 +51,14 @@ public class ContractTokenTransfer {
         BigInteger targetBalanceValue = ContractTokenBalance.getTokenBalance(web3j,targetAddress,contractAddress);
         System.out.println("TARGET_TOKEN_BALANCE_2: " + targetBalanceValue);
 
-
+        BigInteger gasPrice = Convert.toWei("18", Convert.Unit.GWEI).toBigInteger();
+        BigInteger gasLimit = Convert.toWei("100000", Convert.Unit.WEI).toBigInteger();
         String hexvalue = ContractTokenTxSign.signedTokenTransfer(web3j,
                 address,
                 privateKey,
                 targetAddress,
                 contractAddress,
-                BigInteger.valueOf(amount));
+                BigInteger.valueOf(amount),gasPrice,gasLimit);
 
         String tx = ContractTokenTxSend.transferToken(web3j,hexvalue);
         System.out.println("交易流水号：" + tx);

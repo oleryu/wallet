@@ -30,8 +30,7 @@ import java.util.Arrays;
  */
 public class ContractTokenTxSign {
 
-    static BigInteger GAS_PRICE = BigInteger.valueOf(22_000_000_000L);
-    static BigInteger GAS_LIMIT = BigInteger.valueOf(300_300_000);
+
 
     static byte chainId = (byte)15;
 
@@ -69,12 +68,17 @@ public class ContractTokenTxSign {
         BigInteger targetBalanceValue = ContractTokenBalance.getTokenBalance(web3j,targetAddress,targetAddress);
         System.out.println("TARGET_TOKEN_BALANCE_2: " + targetBalanceValue);
 
+        //Convert.toWei("18", Convert.Unit.GWEI).toBigInteger()
+        //
+        BigInteger gasPrice = Convert.toWei("18", Convert.Unit.GWEI).toBigInteger();
+        BigInteger gasLimit = Convert.toWei("100000", Convert.Unit.WEI).toBigInteger();
+
         String hexvalue = signedTokenTransfer(web3j,
                 address,
                 privateKey,
                 targetAddress,
                 contractAddress,
-                BigInteger.valueOf(amount));
+                BigInteger.valueOf(amount),gasPrice,gasLimit);
 
     }
 
@@ -85,7 +89,7 @@ public class ContractTokenTxSign {
                                        String privateKey,
                                        String targetAddress,
                                        String contractAddress,
-                                             BigInteger amount) throws Exception {
+                                             BigInteger amount,BigInteger gasPrice,BigInteger gasLimit) throws Exception {
 
         ECKeyPair ecKeyPair = ECKeyPair.create(new BigInteger(privateKey, 16));
         Credentials credentials = Credentials.create(ecKeyPair);
@@ -105,8 +109,8 @@ public class ContractTokenTxSign {
         String encodedFunction = FunctionEncoder.encode(function);
 
         RawTransaction rawTransaction = RawTransaction.createTransaction(nonce,
-                Convert.toWei("18", Convert.Unit.GWEI).toBigInteger(),
-                Convert.toWei("100000", Convert.Unit.WEI).toBigInteger(),
+                gasPrice,
+                gasLimit,
                 contractAddress, encodedFunction);
 
         byte[] signedMessage = TransactionEncoder.signMessage(rawTransaction, credentials);

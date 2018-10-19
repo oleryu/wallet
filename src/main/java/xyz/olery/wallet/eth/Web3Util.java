@@ -44,6 +44,10 @@ public class Web3Util {
     //Web3j web3j = Web3j.build(new HttpService("https://kovan.infura.io/<your-token>"));
     public static Web3j web3j = Web3j.build(new HttpService("http://192.168.10.168:8545"));
 
+//    //18_000_000_000L
+    public static BigInteger GAS_PRICE = BigInteger.valueOf(3_000_000_000L);//可取到
+    public static BigInteger GAS_LIMIT = BigInteger.valueOf(300_300_000);//实际 21000
+
     //TestNet3Params
     //MainNetParams
     //RegTestParams
@@ -124,12 +128,16 @@ public class Web3Util {
         BigInteger targetBalanceValue = ContractTokenBalance.getTokenBalance(web3j,addressTo,contractAddress);
         System.out.println("TARGET_TOKEN_BALANCE_2: " + targetBalanceValue);
 
+//        BigInteger gasPrice = Convert.toWei("18", Convert.Unit.GWEI).toBigInteger();
+//        BigInteger gasLimit = Convert.toWei("100000", Convert.Unit.WEI).toBigInteger();
+        BigInteger gasPrice = GAS_PRICE;
+        BigInteger gasLimit = GAS_LIMIT;
         String hexvalue = ContractTokenTxSign.signedTokenTransfer(web3j,
                 address,
                 privateKey,
                 addressTo,
                 contractAddress,
-                value);
+                value,gasPrice,gasLimit);
 
         System.out.println(hexvalue);
         return hexvalue;
@@ -147,7 +155,12 @@ public class Web3Util {
 
 
     public static String transSignedByHDWallet(HDWalletAccount walletAccount,String toAddress,BigInteger value) throws Exception{
-        String hexValue = TransSignByHDWallet.signTx(web3j,walletAccount,toAddress,value);
+
+//        BigInteger gasPrice = Convert.toWei("18", Convert.Unit.GWEI).toBigInteger();
+//        BigInteger gasLimit = Convert.toWei("100000", Convert.Unit.WEI).toBigInteger();
+        BigInteger gasPrice = GAS_PRICE;
+        BigInteger gasLimit = GAS_LIMIT;
+        String hexValue = TransSignByHDWallet.signTx(web3j,walletAccount,toAddress,value,gasPrice,gasLimit);
         return hexValue;
 
     }
@@ -213,39 +226,39 @@ public class Web3Util {
 
     public static void main(String[] args) throws Exception {
         /**
-         * dilemma aspect clog craft mercy record flavor child confirm arena hint catalog
-         * eth 测试地址 0xb0077fb3c1d4de09dcb79cadc9f7fd25422918d9
+         |seedCode|: obscure balcony extend need govern fog item monitor moment fire depth when
+         |ethAddress|: 0xe6471ba0615fe9dcf2246e0cc6aa77378d2b6582
          *
          * eth 测试地址2 0xf52F3cA3E5FB9A7b95f5b93dd9812b335Bddf20A
          * 0x0bE7428574EF444ba3ce5f2EBa46D1bF58B1508F
          */
         //----------------------------------------------------------------
-
-        String seedCode = "legend finger master ordinary soccer stomach predict alone drift foot piano address";
+        //30000  OLE  100 ETH
+        String seedCode = "weasel because party metal canal public vicious police edit able used horn";
         String ethKeypath = "M/44H/60H/0H/0/0";
         String passphrase = "";
 
         HDWalletAccount walletAccount = new HDWalletAccount(seedCode,ethKeypath,passphrase);
 
         String contractAddress = "0xBa7c2cd5332f6AB4e84a7220f9e1716d7EDEdd89";
-        String addressTo = "0xa22Ce7d5e118694d90176e2cB26970F5a7598D6d";
+        String addressTo = "0x7c7bB9e22BDDF4c2ee60e17caD1A66D7b3c0419D";
 //        testTokenTransactionGasLimit(web3j,walletAccount,contractAddress,addressTo);
-//        testTransactionGasLimit(web3j
-//                ,walletAccount
-//                ,addressTo,BigInteger.valueOf(10));
+        testTransactionGasLimit(web3j
+                ,walletAccount
+                ,addressTo,BigInteger.valueOf(5));
 
 //        generateNewWalletFile();
 
-        getWalletBlanceOf(walletAccount);
+//        getWalletBlanceOf(walletAccount);
 //----------------------------------------------------------------------------------------
         //ETH 转账
-        long amount = 12;
+
         //with receipt
 //        transByHDWalletWithReceipt(walletAccount,addressTo,amount);
         //创建交易，这里是转0.5个以太币
         //amount = 0.5  0.5 以太币
 
-        BigInteger value = Convert.toWei("35", Convert.Unit.ETHER).toBigInteger();
+        BigInteger value = Convert.toWei("5", Convert.Unit.ETHER).toBigInteger();
         String hexValue = transSignedByHDWallet(walletAccount,addressTo,value);
         String transactionHash = TransactionSender.sendto( web3j,hexValue);
         System.out.println(transactionHash);
@@ -254,8 +267,7 @@ public class Web3Util {
 //        String address = "0xb0077fb3c1d4de09dcb79cadc9f7fd25422918d9";
 //        getTokenBalance(web3j,address,contractAddress);
 //----------------------------------------------------------------------------------------
-//         System.out.println(MnemonicCodeUtil.getMnemonicCode());
-//         System.out.println(MnemonicCodeUtil.getMnemonicCodeByDic());
+
 //----------------------------------------------------------------------------------------
 //        hdWalletAddrerss();
 //----------------------------------------------------------------------------------------
@@ -264,8 +276,13 @@ public class Web3Util {
 //        String signData = signedTokenTransfer(web3j,
 //                walletAccount,contractAddress,addressTo,BigInteger.valueOf(99));
         //交易转账
-//        String signData ="0xf8aa80850430e23400830186a0940be7428574ef444ba3ce5f2eba46d1bf58b1508f80b844a9059cbb000000000000000000000000f52f3ca3e5fb9a7b95f5b93dd9812b335bddf20a000000000000000000000000000000000000000000000000000000000000000a1ca0c397250de09ac7fe521a766473cab8bd823e1808deb84f5c365e42db5aa7a5fba00b66567c1cdcd9e7c6bd1a67768c50d8817946db508dac4b27e9fd64bc85c12b";
+        //String signData ="0xf8aa80850430e23400830186a0940be7428574ef444ba3ce5f2eba46d1bf58b1508f80b844a9059cbb000000000000000000000000f52f3ca3e5fb9a7b95f5b93dd9812b335bddf20a000000000000000000000000000000000000000000000000000000000000000a1ca0c397250de09ac7fe521a766473cab8bd823e1808deb84f5c365e42db5aa7a5fba00b66567c1cdcd9e7c6bd1a67768c50d8817946db508dac4b27e9fd64bc85c12b";
 //        transferToken(signData);
 //----------------------------------------------------------------------------------------
+        //取上一笔，交易 最小值
+        //查询当前区块 GWEI
+        //https://ethstats.net/
+        BigInteger gasPrice = web3j.ethGasPrice().sendAsync().get().getGasPrice();
+        System.out.println(gasPrice);
     }
 }
