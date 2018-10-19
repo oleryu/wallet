@@ -1,0 +1,22 @@
+<walletdata>
+    <dentity_id>xxxx</dentity_id>
+    <dentity_name>xxxx</dentity_name>
+    <walletlist>
+        <wallet>
+            <name>ETH-Wallet</name><type>eth-wallet</type><keytype>mnemonic</keytype><addr>xxxx</addr><keytext>mnemonic1</keytext>
+        </wallet>
+        <wallet>
+            <name>BTC-Wallet</name><type>btc-segwit</type><keytype>mnemonic</keytype><addr>xxxx</addr><keytext>mnemonic1</keytext>
+        </wallet>
+        <wallet>
+            <name>ETH-Wallet-1</name><type>eth-wallet</type><keytype>privatekey</keytype><addr>xxxx</addr><keytext>privatekeyText</keytext>
+        </wallet>
+        <wallet>
+            <name>ETH-Wallet-2</name><type>eth-wallet</type><keytype>keystore</keytype><addr>xxxx</addr><keytext>keystoreText</keytext>
+        </wallet>
+        <wallet>
+            <name>BTC-Wallet-1</name><type>btc-wallet</type><keytype>privatekey</keytype><addr>xxxx</addr><keytext>mnemonic1</keytext>
+        </wallet>
+    </walletlist>
+    <sign>xxxx</sign>
+</walletdata>

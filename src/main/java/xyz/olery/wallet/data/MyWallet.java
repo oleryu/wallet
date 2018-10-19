@@ -1,4 +1,4 @@
-package xyz.olery.wallet.hd;
+package xyz.olery.wallet.data;
 
 public class MyWallet {
     private String name;
