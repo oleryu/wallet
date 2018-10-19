@@ -4,7 +4,6 @@ import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
 import org.bitcoinj.core.*;
 import org.bitcoinj.kits.WalletAppKit;
-import org.bitcoinj.params.TestNet3Params;
 import org.bitcoinj.wallet.DeterministicSeed;
 import org.bitcoinj.wallet.SendRequest;
 import org.bitcoinj.wallet.UnreadableWalletException;
@@ -13,27 +12,29 @@ import org.bitcoinj.wallet.listeners.WalletCoinsReceivedEventListener;
 import xyz.olery.wallet.hd.MnemonicToKey;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.List;
 
-public class BitcoinWallet {
+public class BitcoinWalletTx {
 
-    public static void main(String[] args) throws Exception {
-        String seedcode = "tuna biology crawl bone bread chalk light there pattern borrow afraid inherit";
-
-        BitcoinWallet.start(seedcode);
+    public static void main(String[] args) throws Exception  {
+        //2MzKZQoqRW2Uho3Fkxtbi1GtrYMFLWrw8ad
+        walletAppKit(args);
     }
 
-    public static void start(String seedcode) throws Exception {
-
+    public static void walletAppKit(String[] args) throws Exception {
+        String seedcode = "tuna biology crawl bone bread chalk light there pattern borrow afraid inherit";
+//        NetworkParameters params = MainNetParams.get();
         NetworkParameters params = LocalRegTestParams.get();
         WalletAppKit walletAppKit = getWalletKit(params,seedcode,"");
 
+
         Wallet wallet = walletAppKit.wallet();
-        System.out.println(wallet.getBalance());
+//        System.out.println(wallet.getBalance());
 
-
+        boolean nosend = true;
         while (true) {
             try {
                 System.out.println("|ImportKeySize    |:" + wallet.getImportedKeys().size());
@@ -43,10 +44,57 @@ public class BitcoinWallet {
 
                 System.out.println(wallet.getImportedKeys().get(0).toAddress(params).toBase58());
                 Thread.sleep(5000);
+//                if(wallet.getBalance().isGreaterThan(Coin.parseCoin("10"))) {
+//                    if(nosend) {
+//                        send(params,walletAppKit,"2ND27LasznyE3ct9ijEdKeNhyviX6mbPETt","1");
+//                        nosend = false;
+//                    }
+//
+//                };
+
 
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
+        }
+        //send(params,walletAppKit,"2ND27LasznyE3ct9ijEdKeNhyviX6mbPETt","10");
+    }
+
+     ///1
+    public static  String send(NetworkParameters params,WalletAppKit walletAppKit, String recipientAddress, String amount){
+        String err = "";
+
+        if(recipientAddress.equals("") || recipientAddress.equals("Scan recipient QR")) {
+            err = "Select recipient";
+            return err;
+        }
+        if(amount.equals("") | Double.parseDouble(amount) <= 0) {
+            err = "Select valid amount";
+            return err;
+
+        }
+
+        System.out.println(">>>>>>>" + walletAppKit.wallet().getBalance());
+        System.out.println(">>>>>>>" + Coin.parseCoin(amount));
+//        if(walletAppKit.wallet().getBalance().isLessThan(Coin.parseCoin(amount))) {
+//            err = "You got not enough coins";
+//            return err;
+//        }
+
+
+        SendRequest request = SendRequest.to(Address.fromBase58(params, recipientAddress), Coin.parseCoin(amount));
+        System.out.println(">>>>>>>>>>>>>>>." + walletAppKit.peerGroup().getConnectedPeers().size());
+        try {
+            walletAppKit.wallet().completeTx(request);
+            walletAppKit.wallet().commitTx(request.tx);
+
+
+
+            walletAppKit.peerGroup().broadcastTransaction(request.tx).broadcast();
+            return "";
+        } catch (InsufficientMoneyException e) {
+            e.printStackTrace();
+            return  e.getMessage();
         }
     }
 
@@ -105,10 +153,9 @@ public class BitcoinWallet {
                 e.printStackTrace();
             }
             ;
-
+            System.out.println(params.getPort());
             walletAppKit.setPeerNodes(new PeerAddress(params, localHost, 19000));
         }
-
 
         if(seedcode != null){
             try {
@@ -117,17 +164,33 @@ public class BitcoinWallet {
                 //DeterministicSeed seed = new DeterministicSeed(seedcode, null, passphrase,Utils.currentTimeSeconds());
                 //DeterministicSeed seed = new DeterministicSeed(seedcode, null, "", 1409478661L);
                 DeterministicSeed seed = new DeterministicSeed(seedcode, null, passphrase, Utils.currentTimeSeconds());
-                  walletAppKit.restoreWalletFromSeed(seed);
+
+                walletAppKit.restoreWalletFromSeed(seed);
             } catch (UnreadableWalletException e) {
                 e.printStackTrace();
             }
 
         }
-
         walletAppKit.startAsync();
         walletAppKit.awaitRunning();
-         return  walletAppKit;
+        return  walletAppKit;
     }
+
+    public static File getBLockFile(){
+        File file = new File("D://tmp//bitcoin-blocks");
+        if(!file.exists()){
+            try {
+                boolean newFile = file.createNewFile();
+                if(newFile){
+                    return file;
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return file;
+    }
+
 
     public  static void  setupWalletListeners(Wallet wallet) {
         wallet.addCoinsReceivedEventListener(new CoinsReceived());
@@ -155,20 +218,3 @@ public class BitcoinWallet {
     }
 }
 
-class CoinsReceived implements WalletCoinsReceivedEventListener {
-    public void onCoinsReceived(final Wallet wallet, final Transaction transaction, Coin prevBalance, Coin newBalance) {
-        final Coin value = transaction.getValueSentToMe(wallet);
-        System.out.println("Received tx for " + value.toFriendlyString() + ": " + transaction);
-        System.out.println("Previous balance is " + prevBalance.toFriendlyString());
-        System.out.println("New estimated balance is " + newBalance.toFriendlyString());
-        System.out.println("Coin received, wallet balance is :" + wallet.getBalance());
-        Futures.addCallback(transaction.getConfidence().getDepthFuture(1), new FutureCallback<TransactionConfidence>() {
-            public void onSuccess(TransactionConfidence result) {
-                System.out.println("Transaction confirmed, wallet balance is :" + wallet.getBalance());
-            }
-            public void onFailure(Throwable t) {
-                t.printStackTrace();
-            }
-        });
-    }
-}

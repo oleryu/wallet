@@ -387,6 +387,20 @@ public class BitcoinUtil {
 ////            Log.e("signing exception", e.getMessage().toString());
 //        }
 //    }
+
+    public static void creataeWalletBySeed() throws Exception{
+        String seedCode = "yard impulse luxury drive today throw farm pepper survey wreck glass federal";
+        long creationtime = 1409478661L;
+        DeterministicSeed seed = new DeterministicSeed(seedCode, null, "", creationtime);
+
+        NetworkParameters params = TestNet3Params.get();
+        Wallet restoredWallet = Wallet.fromSeed(params, seed);
+
+        System.out.println(restoredWallet.currentReceiveAddress());
+
+
+
+    }
 }
 
 

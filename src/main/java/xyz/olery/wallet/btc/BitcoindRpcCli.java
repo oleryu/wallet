@@ -25,12 +25,16 @@ import wf.bitcoin.javabitcoindrpcclient.BitcoindRpcClient.MiningInfo;
  *
  *
  */
-public class BitcoindMain {
+public class BitcoindRpcCli {
+
 
     public static void main(String[] args) throws Exception {
 
-        BitcoindRpcClient rpcClient = new BitcoinJSONRPCClient("http://admin1:123@192.168.227.138:19001");
-        rpcClient.setTxFee(new BigDecimal(0.001).setScale(3, BigDecimal.ROUND_DOWN));
+//        wf.bitcoin.javabitcoindrpcclient.BitcoindRpcClient rpcClient = new BitcoinJSONRPCClient("http://bitcoin:local321@192.168.10.107:19031");
+        //rpcClient.setTxFee(new BigDecimal(0.001).setScale(3, BigDecimal.ROUND_DOWN));
+        //admin1
+        wf.bitcoin.javabitcoindrpcclient.BitcoindRpcClient rpcClient = new BitcoinJSONRPCClient("http://admin2:123@192.168.124.2:19011");
+
 
         MiningInfo info = rpcClient.getMiningInfo();
         System.out.println("Mining Information");
@@ -40,21 +44,27 @@ public class BitcoindMain {
         System.out.println("Difficulty.: " + info.difficulty());
         System.out.println("Hash Power.: " + new BigDecimal(info.networkHashps()).toPlainString());
 
-        String address = rpcClient.getNewAddress("Learning-Bitcoin-from-the-Command-Line");
-        System.out.println("New Address: " + address);
+        System.out.println(">>>>>>>>>>>>>>.." + rpcClient.getInfo().balance());
 
-        String privKey = rpcClient.dumpPrivKey(address);
-        System.out.println("Priv Key: " + privKey);
+        //String address = rpcClient.getNewAddress("Learning-Bitcoin-from-the-Command-Line");
+        //System.out.println("New Address: " + address);
+
+//        String privKey = rpcClient.dumpPrivKey(address);
+//        System.out.println("Priv Key: " + privKey);
 
         BlockChainInfo chainInfo = rpcClient.getBlockChainInfo();
         String blockHash = rpcClient.getBlockHash(chainInfo.blocks());
 
 
 
+
         System.out.println("Blockchain Info " + chainInfo);
         System.out.println("Block Hash: " + blockHash);
 
-        System.out.println("Balance: " + rpcClient.getBalance("1111111111",0));
+//        System.out.println("Balance: " + rpcClient.getBalance("2N81cVg1AtRssWuhDKDMdYXevZq19hV9jC1",0));
+//        System.out.println("Balance: " + rpcClient.getBalance("2N81cVg1AtRssWuhDKDMdYXevZq19hV9jC1"));
+        System.out.println("Balance: " + rpcClient.getBalance(""));
+
 
 
         //2MvZr3u2N4jte8v1qdcUs3Qmot1VDxLGRkT

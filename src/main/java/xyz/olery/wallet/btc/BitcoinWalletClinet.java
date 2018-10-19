@@ -24,15 +24,20 @@ import java.util.concurrent.ExecutionException;
 
 public class BitcoinWalletClinet {
 
-    public static void main(String[] args) throws Exception {
+    public static void main(String[] args) throws Exception  {
+        //2MzKZQoqRW2Uho3Fkxtbi1GtrYMFLWrw8ad
+        walletAppKit(args);
+    }
+
+    public static void walletAppKit(String[] args) throws Exception {
         String seedcode = "tuna biology crawl bone bread chalk light there pattern borrow afraid inherit";
-        NetworkParameters params = MainNetParams.get();
-        //NetworkParameters params = LocalRegTestParams.get();
+//        NetworkParameters params = MainNetParams.get();
+        NetworkParameters params = LocalRegTestParams.get();
         WalletAppKit walletAppKit = getWalletKit(params,seedcode,"");
 
 
         Wallet wallet = walletAppKit.wallet();
-        System.out.println(wallet.getBalance());
+//        System.out.println(wallet.getBalance());
 
         boolean nosend = true;
         while (true) {
@@ -76,10 +81,10 @@ public class BitcoinWalletClinet {
 
         System.out.println(">>>>>>>" + walletAppKit.wallet().getBalance());
         System.out.println(">>>>>>>" + Coin.parseCoin(amount));
-        if(walletAppKit.wallet().getBalance().isLessThan(Coin.parseCoin(amount))) {
-            err = "You got not enough coins";
-            return err;
-        }
+//        if(walletAppKit.wallet().getBalance().isLessThan(Coin.parseCoin(amount))) {
+//            err = "You got not enough coins";
+//            return err;
+//        }
 
 
         SendRequest request = SendRequest.to(Address.fromBase58(params, recipientAddress), Coin.parseCoin(amount));
@@ -87,6 +92,7 @@ public class BitcoinWalletClinet {
         try {
             walletAppKit.wallet().completeTx(request);
             walletAppKit.wallet().commitTx(request.tx);
+
 
 
             walletAppKit.peerGroup().broadcastTransaction(request.tx).broadcast();
@@ -108,7 +114,7 @@ public class BitcoinWalletClinet {
             passphrase = "";
         }
 
-        WalletAppKit walletAppKit = new WalletAppKit(params, new File("D://tmp"), "") {
+        WalletAppKit walletAppKit = new WalletAppKit(params, new File("D://bitcoinT"), "") {
             @Override
             protected void onSetupCompleted() {
                 if (wallet().getImportedKeys().size() < 1) {
@@ -124,17 +130,17 @@ public class BitcoinWalletClinet {
 
                 wallet().allowSpendingUnconfirmedTransactions();
                 setupWalletListeners(wallet());
-                ECKey ecKey = wallet().getImportedKeys().get(0);
-
-//                //打印助记词
-                List<String> seedWordsFromWallet = getSeedWordsFromWallet(wallet());
-//                for(int i = 0; i < seedWordsFromWallet.size(); i ++) {
-//                    System.out.println(seedWordsFromWallet.get(i));
-//                }
-                //当前地址
-                String s1 = wallet().currentReceiveAddress().toBase58();
-
-                String privateKeyAsWiF = wallet().currentReceiveKey().getPrivateKeyAsWiF(params);
+//                ECKey ecKey = wallet().getImportedKeys().get(0);
+//
+////                //打印助记词
+//                List<String> seedWordsFromWallet = getSeedWordsFromWallet(wallet());
+////                for(int i = 0; i < seedWordsFromWallet.size(); i ++) {
+////                    System.out.println(seedWordsFromWallet.get(i));
+////                }
+//                //当前地址
+//                String s1 = wallet().currentReceiveAddress().toBase58();
+//
+//                String privateKeyAsWiF = wallet().currentReceiveKey().getPrivateKeyAsWiF(params);
 
             }
         };
@@ -143,18 +149,18 @@ public class BitcoinWalletClinet {
         walletAppKit.setBlockingStartup(false);
 //
 //        setDownListener(walletAppKit);
-//        if (params == LocalRegTestParams.get()) {
-//
-//            InetAddress localHost = null;
-//            try {
-//                localHost = InetAddress.getByName("192.168.227.138");
-//            } catch (UnknownHostException e) {
-//                e.printStackTrace();
-//            }
-//            ;
-//            System.out.println(params.getPort());
-//            walletAppKit.setPeerNodes(new PeerAddress(params, localHost, 19000));
-//        }
+        if (params == LocalRegTestParams.get()) {
+
+            InetAddress localHost = null;
+            try {
+                localHost = InetAddress.getByName("192.168.124.2");
+            } catch (UnknownHostException e) {
+                e.printStackTrace();
+            }
+            ;
+            System.out.println(params.getPort());
+            walletAppKit.setPeerNodes(new PeerAddress(params, localHost, 19000));
+        }
 
         if(seedcode != null){
             try {
