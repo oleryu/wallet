@@ -73,6 +73,7 @@ public class TransSignByHDWallet {
         RawTransaction rawTransaction = RawTransaction.createEtherTransaction(
                 nonce, gasPrice, gasLimit, toAddress, value);
 
+
         //签名Transaction，这里要对交易做签名
         byte[] signedMessage = TransactionEncoder.signMessage(rawTransaction, credentials);
         String hexValue = Numeric.toHexString(signedMessage);

@@ -25,10 +25,10 @@ public class FileWalletUtil {
 
     //-------------------------------------------------------------------------------------------------------
     public static void transByWalletFileTest() {
-        String walleFilePath="D:\\home\\wallet\\coinbase\\UTC--2018-09-19T15-34-04.030882499Z--955b687cd8a71c2ae64690ce9799065c9042c2fd";
-        String url = "http://192.168.10.161:8545";
-        String addressTo = "0xa13a849592c07581795fe019c717207157c9f77e";
-        String password="123456";
+        String walleFilePath="D:\\oleryu\\UTC--2018-11-30T14-35-32.998264601Z--41916899b1a4ab15e7359029872d63d86ad3d638";
+        String url = "http://192.168.10.172:8545";
+        String addressTo = "0x1976fdebfe3f4d971be8f8239eb8cb0a40d534c7";
+        String password="12345678";
         try {
             transByWalletFile(url,walleFilePath,password,addressTo);
         } catch (Exception e) {
@@ -46,8 +46,8 @@ public class FileWalletUtil {
 
         if (credentials == null) return;
         //开始发送0.01 =eth到指定地址
-
-        TransactionReceipt send = Transfer.sendFunds(web3j, credentials, addressTo, BigDecimal.ONE, Convert.Unit.FINNEY).send();
+        BigDecimal v = BigDecimal.valueOf(50000);
+        TransactionReceipt send = Transfer.sendFunds(web3j, credentials, addressTo, v , Convert.Unit.FINNEY).send();
 
         System.out.println("Transaction complete:");
         System.out.println("trans hash=" + send.getTransactionHash());
@@ -55,5 +55,10 @@ public class FileWalletUtil {
         System.out.println("to:" + send.getTo());
         System.out.println("gas used=" + send.getGasUsed());
         System.out.println("status: " + send.getStatus());
+    }
+
+    public static void main(String[] args) {
+
+        transByWalletFileTest();
     }
 }

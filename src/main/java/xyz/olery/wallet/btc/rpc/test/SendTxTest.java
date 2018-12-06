@@ -29,10 +29,16 @@ public class SendTxTest {
 
 
     public static void main(String[] args) throws Exception {
+        String txSignedTxt = "010000000199954dbd04b0154d633e760109be9fec24d3965b019bfe4d33b53a348f2a9849010000006b483045022100a7b127481bcd066f891e25a8aea05a1caa3735e4987c2310dc181dc3f3cf80e202204089dea2a8253fc21f5bbb387046a57d17b8da06b69b33d7f45ccead6440bbf5812102d5e73c15e1cc8fad0703a150cb88863cfb7380093d0000eeeb7c5503f5c4756bffffffff0200e1f505000000001976a914b81a765c955b7085f7a6ff4fa9d1829ffcb98bb688ac30dde7a0000000001976a91449455df697aca0942bd7a32fd6547028c8b53a8a88ac00000000";
+
+        sendtx(txSignedTxt);
+    }
+
+    public static void sendtx(String txSignedTxt) throws Exception {
 
 //        NetworkParameters params = MainNetParams.get();
         NetworkParameters params = RegTestParams.get();
-        String seedCode = "tuna biology crawl bone bread chalk light there pattern borrow afraid inherit";
+//        String seedCode = "tuna biology crawl bone bread chalk light there pattern borrow afraid inherit";
 
         /**
          [{
@@ -64,9 +70,11 @@ public class SendTxTest {
          "confirmations": 70
          }]
          */
-        String url = "http://192.168.10.122:3001/insight-api/tx/send";
+        //String url = "http://192.168.10.104:3001/insight-api/tx/send";
+
+        String url = "http://192.168.124.8:3001/insight-api/tx/send";
         SendTxTest sendTxTest = new SendTxTest();
-        String txSignedTxt = "01000000020b3b45950efeba955647c3d186126e74ff418f497cc3622c14014a8655ac59b2010000006a47304402205d098e2bc72128ac6e4be438f57cc6731ab2f1987f5be5ed98f5298b8a1e7d8202207ec85bd79d4fbd4365b8ea93ed0c3c653ea9d75ff3c39195b4c9fde680665379812102d263bf65cc2b6c58c72c5998047d07c8d16162ce0e4a5df404e157eeac96819bffffffffa5a58ce00e5e28bf8c07e76e03dd6ab2e171b9d583fc9cf43d9e85f29a5aa0be010000006b483045022100b4f4b71c5c55a5859bd1ab9f83d06fb11ff20c21ffbc4ee13ee23d0d31f7e00d02205a2f78246cfa8d5107e5158ddd51f35532263a266dfc1165881e1363903eac19812102d263bf65cc2b6c58c72c5998047d07c8d16162ce0e4a5df404e157eeac96819bffffffff02008c8647000000001976a9148c7b1435f01f792680a8e8244dc6980a6861137b88ac1059df11000000001976a914ce2252959ab2d7e5f6aa4d0de1972d8e87dd817888ac00000000";
+        //String txSignedTxt = "0100000001d446c4f95212cdd130a73b96c2dde57b7c63214ab042fe79d6bfce3509ac13df000000006b483045022100f475baa84fddc1e98d376bd2acefec10d45d655b51ab0d0efdeac043a0c82f20022060fa7bcbd3a2e15c396f3b73b33e61085f3ed131a0015a31429c80a0d193909881210293042aa716ed785515e7cea87747e1b84f0428417ef4625995d5782458b43d60ffffffff0200c2eb0b000000001976a9147d7c05e76611b161509af321909fde1a2c9206c188ac10beac2f000000001976a9145f24b5e1626381ddcb8511fdd02ebd8f49a42dce88ac00000000";
         HashMap<String,String> inputArgs = new HashMap<String,String>();
         inputArgs.put("rawtx", txSignedTxt);
         String result = sendTxTest.txSend(url,inputArgs);

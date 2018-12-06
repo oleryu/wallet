@@ -30,22 +30,22 @@ public class TransSignByWalletFile {
 
     public static void transByWalletFileTest() throws Exception{
         //
-        String walleFilePath="D:\\home\\wallet\\coinbase\\UTC--2018-10-13T15-37-42.387596284Z--5087743894ef4dbbc5fb2807ad27b79453e0d5ea";
-        String url = "http://192.168.124.2:8545";
-        String addressTo = "0xb1aba410f569288102dd7a1f1527c40eadef7fb9";
-        String password="123456";
+        String walleFilePath="D:\\home\\wallet\\coinbase\\UTC--2018-10-26T10-00-17.595874902Z--875de45b9b74a9de75680327aa89f8b266d9c74a";
+//        String url = "http://192.168.124.6:8545";
+        String addressTo = "0x9dd0dfec61e84013ba89add69d1283759949044b";
+        String password="12345678";
 
-        signTx(password,walleFilePath);
+        signTx(password,walleFilePath,addressTo);
     }
 
 
-    public static void signTx(String password, String walleFilePath) throws Exception {
+    public static void signTx(String password, String walleFilePath,String addressTo) throws Exception {
         Web3j web3j = Web3Util.web3j;
 
 
-        MyWalletAccount myWalletAccount = new MyWalletAccount(password,walleFilePath);
+        MyWalletAccount myWalletAccount = new MyWalletAccount(walleFilePath,password);
         //被转人账户地址
-        String toAddress = "0xb1aba410f569288102dd7a1f1527c40eadef7fb9";
+        //String toAddress = "0xb1aba410f569288102dd7a1f1527c40eadef7fb9";
         //转账人账户地址
         String ownAddress = myWalletAccount.ethAddress();
 
@@ -57,9 +57,9 @@ public class TransSignByWalletFile {
         BigInteger nonce = ethGetTransactionCount.getTransactionCount();
 
         //创建交易，这里是转0.5个以太币
-        BigInteger value = Convert.toWei("50", Convert.Unit.ETHER).toBigInteger();
+        BigInteger value = Convert.toWei("0.5", Convert.Unit.ETHER).toBigInteger();
         RawTransaction rawTransaction = RawTransaction.createEtherTransaction(
-                nonce, GAS_PRICE, GAS_LIMIT, toAddress, value);
+                nonce, GAS_PRICE, GAS_LIMIT, addressTo, value);
 
         //签名Transaction，这里要对交易做签名
         byte[] signedMessage = TransactionEncoder.signMessage(rawTransaction, myWalletAccount.getCredentials());

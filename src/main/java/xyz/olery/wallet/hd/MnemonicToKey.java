@@ -1,5 +1,6 @@
 package xyz.olery.wallet.hd;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import net.sf.json.JSONObject;
 import org.bitcoinj.core.Address;
 import org.bitcoinj.core.ECKey;
@@ -15,13 +16,11 @@ import org.bitcoinj.script.Script;
 import org.bitcoinj.wallet.DeterministicKeyChain;
 import org.bitcoinj.wallet.DeterministicSeed;
 import org.bitcoinj.wallet.Wallet;
-import org.web3j.crypto.Credentials;
-import org.web3j.crypto.ECKeyPair;
-import org.web3j.crypto.Keys;
-import org.web3j.crypto.WalletFile;
+import org.web3j.crypto.*;
 import xyz.olery.wallet.btc.LocalRegTestParams;
 //import org.web3j.crypto.Credentials;
 
+import java.io.IOException;
 import java.math.BigInteger;
 import java.util.List;
 
@@ -63,7 +62,7 @@ public class MnemonicToKey {
         //String seedCode = "tuna biology crawl bone bread chalk light there pattern borrow afraid inherit";
 
         // BitcoinJ
-        DeterministicSeed seed = new DeterministicSeed(seedCode, null, "", 1409478661L);
+        DeterministicSeed seed = new DeterministicSeed(seedCode, null, passphrase, 1409478661L);
         DeterministicKeyChain chain = DeterministicKeyChain.builder().seed(seed).build();
         //"M/44H/0H/0H/0/0"
         //"M/44H/60H/0H/0/0"
@@ -96,7 +95,10 @@ public class MnemonicToKey {
 
     public static String btc44Address(String seedCode,String passphrase,NetworkParameters params,String strKeypath) throws Exception {
         DeterministicKey key = getDeterministicKey(seedCode,passphrase,strKeypath);
+
         BigInteger privKey = key.getPrivKey();
+        String privateKey = privKey.toString(16);
+        System.out.println(privateKey);
 
         ECKey ecKey = ECKey.fromPrivate(privKey);
 
@@ -193,15 +195,15 @@ public class MnemonicToKey {
     public static void main(String[] args) throws Exception {
         //String seedCode = "marble ready camp mention verify panda stereo dwarf cigar bubble cheese quit";
         //String seedCode = "marble ready camp mention verify panda stereo dwarf cigar bubble cheese quit";
-        String seedCode = "beach off supreme nut route glide busy beef grass solve crater dry";
+        String seedCode = "faith assist joy kidney climb clerk legend hover before budget consider lobster";
         String btcKeyath = "M/44H/0H/0H/0/0";
         String ethKeyath = "M/44H/60H/0H/0/0";
         //TestNet3Params
         //MainNetParams
         //RegTestParams
         NetworkParameters params = RegTestParams.get();
-        String bip44Address = MnemonicToKey.btc44Address(seedCode,"12345678",params,btcKeyath);
-        String bip49Address = MnemonicToKey.btc49Address(seedCode,"12345678",params,btcKeyath);
+        String bip44Address = MnemonicToKey.btc44Address(seedCode,"",params,btcKeyath);
+        String bip49Address = MnemonicToKey.btc49Address(seedCode,"",params,btcKeyath);
 
         System.out.println("BIP44 Address：" +bip44Address);
         System.out.println("BIP49 Address：" +bip49Address);

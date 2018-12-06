@@ -44,7 +44,7 @@ public class SignTxTest {
 //        NetworkParameters params = MainNetParams.get();
         NetworkParameters params = RegTestParams.get();
         //String seedCode = "tuna biology crawl bone bread chalk light there pattern borrow afraid inherit";
-        String seedCode = "snake vehicle erase news apple strategy industry dash permit knee talk ill";
+        String seedCode = "faith assist joy kidney climb clerk legend hover before budget consider lobster";
 
         /**
          [{
@@ -80,12 +80,12 @@ public class SignTxTest {
 
         //72 BTC
         //tuna biology crawl bone bread chalk light there pattern borrow afraid inherit
-        String from = "mzJtcM4wXEcJk6ojfFoGMKDTsEEPJF2RoU";
+        String from = "mst1TjPdd3ZRe845R8iiBHdps9Kaoi8yz4";
 
         //datadir=2
-        String to = "mtKkLauudfQPp5gDSXuHperufUh7V2zS8c";
+        String to = "n1j7r9bTxo9d6iLPYtQSj2KQBm3AxpyCYe";
 
-        String url = "http://192.168.10.122:3001/insight-api/addr/"+from+"/utxo";
+        String url = "http://192.168.124.8:3001/insight-api/addr/"+from+"/utxo";
 
         System.out.println(url);
         SignTxTest signDataTest = new SignTxTest();
@@ -120,23 +120,21 @@ public class SignTxTest {
 
         }
 
-
-
-
-
         String privateKey = signDataTest.eckey(params,seedCode);
 
-        long value = 1200000000l;
-        long fee =      150000l;
+        long value = 200000000l;
+        long fee =      1150000l;
         String signDateString = signDataTest.signTxData(params,unSpentBTCList,from,to,privateKey,value,fee);
 
         System.out.println(signDateString);
+
+        //SendTxTest.sendtx(signDateString);
 
     }
 
     public String eckey(NetworkParameters params,String seedCode) throws Exception {
 
-        String passphrase = "";
+        String passphrase = "12345678";
         String strKeypath = "M/44H/0H/0H/0/0";
         DeterministicKey key = getDeterministicKey(seedCode,passphrase,strKeypath);
         BigInteger privKey = key.getPrivKey();
@@ -146,8 +144,8 @@ public class SignTxTest {
 //        System.out.println("publicKey: " + publicKey);
         String privateKey = ecKey.getPrivateKeyEncoded(params).toString();
 //        System.out.println("privateKey: " + privateKey);
-//        Address address = ecKey.toAddress(params);
-//        System.out.println(address.toBase58());
+        Address address = ecKey.toAddress(params);
+        System.out.println(address.toBase58());
         return  privateKey;
     }
 

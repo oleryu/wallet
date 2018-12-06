@@ -43,4 +43,6 @@ public class CreateWalletTest {
         WalletFile walletFile = (WalletFile)objectMapper.readValue(content, WalletFile.class);
         return Credentials.create(Wallet.decrypt(password, walletFile));
     }
+
+
 }

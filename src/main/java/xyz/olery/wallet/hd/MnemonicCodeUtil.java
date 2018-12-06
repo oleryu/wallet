@@ -17,6 +17,10 @@ import org.bitcoinj.wallet.UnreadableWalletException;
  * oleryu@aliyun
  */
 public class MnemonicCodeUtil {
+
+    public static void main(String[] args) {
+        System.out.println(getMnemonicCode());
+    }
     //-----------------------------------------------------------------------------------
     public static String getMnemonicCode() {
         //spoon tackle camp vintage present soldier trap sample over team foil force

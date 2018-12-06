@@ -33,7 +33,7 @@ public class MyWalletAccount {
         try {
             credentials = WalletUtils.loadCredentials(passphrase, walleFilePath);
         } catch(Exception e) {
-
+            e.printStackTrace();
         }
 
     }
